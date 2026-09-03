@@ -1,134 +1,229 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIH26034 — Legal Metrology Packaging Inspector</title>
+  <title>INSIST — Legal Metrology Inspection Assistant</title>
+  <link rel="icon" type="image/png" href="/logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: #0b0f19; color: #f1f5f9; }
-    .step-active { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; font-weight: 700; }
-    .step-done { border-color: #10b981; background-color: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; }
-    .step-idle { border-color: #1e293b; color: #64748b; }
+    :root {
+      --bg-primary: #050505;
+      --bg-card: rgba(12, 12, 14, 0.45);
+      --card-blur: 35px;
+      --card-border: rgba(255, 255, 255, 0.10);
+      --card-border-hover: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.72);
+      --text-muted: rgba(255, 255, 255, 0.45);
+    }
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #050505;
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(var(--card-blur));
+      -webkit-backdrop-filter: blur(var(--card-blur));
+      border: 1px solid var(--card-border);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 0 rgba(0, 0, 0, 0.4), 0 24px 60px rgba(0, 0, 0, 0.6);
+    }
+    .glass-card-interactive {
+      background: rgba(15, 15, 18, 0.5);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.36, 1);
+    }
+    .glass-card-interactive:hover {
+      background: rgba(22, 22, 28, 0.65);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    .step-active {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.10);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+    .step-done {
+      border-color: rgba(52, 211, 153, 0.3);
+      background: rgba(16, 185, 129, 0.08);
+      color: #34d399;
+    }
+    .step-idle {
+      border-color: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.35);
+    }
+    .btn-noir-primary {
+      background: #ffffff;
+      color: #050505;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.36, 1);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+    }
+    .btn-noir-primary:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: translateY(-1px);
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.25);
+    }
+    .btn-noir-primary:active {
+      transform: scale(0.96);
+    }
+    .btn-noir-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.36, 1);
+    }
+    .btn-noir-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .btn-noir-secondary:active {
+      transform: scale(0.96);
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="flex flex-col justify-between relative selection:bg-white selection:text-black">
 
-  <!-- Top Header -->
-  <header class="border-b border-slate-800 bg-slate-900/90 px-6 py-4 sticky top-0 z-50">
+  <!-- Ambient Light Orbs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-32 left-1/4 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[120px]"></div>
+    <div class="absolute top-1/2 -right-32 w-[600px] h-[600px] bg-white/[0.015] rounded-full blur-[140px]"></div>
+  </div>
+
+  <!-- Glass Noir Header -->
+  <header class="border-b border-white/[0.08] bg-[#050505]/70 backdrop-blur-2xl px-6 py-4 sticky top-0 z-50">
     <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <!-- Logo + Brand -->
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20">
-          <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+        <div class="w-9 h-9 rounded-xl border border-white/[0.15] bg-white/[0.04] p-1 flex items-center justify-center shadow-lg shadow-black/80 overflow-hidden">
+          <img src="/logo.png" alt="INSIST Logo" class="w-full h-full object-contain rounded-lg" onerror="this.src='/favicon.svg'" />
         </div>
         <div>
-          <h1 class="text-base font-bold text-white tracking-tight">Pre-Packed Commodity Inspector</h1>
-          <p class="text-xs text-slate-400">SIH26034 • Legal Metrology (LMPC) Assistant</p>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-extrabold tracking-tight text-white font-mono">INSIST</h1>
+            <span class="text-[9px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-neutral-400">NOIR</span>
+          </div>
+          <p class="text-xs text-neutral-400 font-light">Pre-Packed Commodity Inspector • Legal Metrology (LMPC)</p>
         </div>
       </div>
-      <div class="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>AI reads. Code decides.</span>
+
+      <!-- Philosophy Badge -->
+      <div class="text-xs font-mono text-neutral-400 bg-white/[0.03] px-3.5 py-1.5 rounded-full border border-white/[0.08] flex items-center gap-2 backdrop-blur-md">
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+        <span class="text-neutral-300 font-medium">AI reads. Code decides.</span>
       </div>
     </div>
   </header>
 
   <!-- Step-by-Step Main Container -->
-  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10">
     
     <!-- Progress Stepper -->
     <div class="grid grid-cols-5 gap-2 text-center text-xs">
-      <div id="badge-step-1" class="py-2.5 px-1 rounded-xl border step-active transition flex flex-col items-center gap-1">
-        <span class="text-[10px] uppercase font-mono tracking-wider font-bold">Step 1</span>
-        <span>1. Capture / Upload</span>
+      <div id="badge-step-1" class="py-3 px-1 rounded-2xl border step-active transition-all flex flex-col items-center gap-1 font-semibold">
+        <span class="text-[9px] uppercase font-mono tracking-widest text-neutral-400">Step 01</span>
+        <span>Capture</span>
       </div>
-      <div id="badge-step-2" class="py-2.5 px-1 rounded-xl border step-idle transition flex flex-col items-center gap-1">
-        <span class="text-[10px] uppercase font-mono tracking-wider font-bold">Step 2</span>
-        <span>2. Quality Gate</span>
+      <div id="badge-step-2" class="py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold">
+        <span class="text-[9px] uppercase font-mono tracking-widest text-neutral-500">Step 02</span>
+        <span>Quality</span>
       </div>
-      <div id="badge-step-3" class="py-2.5 px-1 rounded-xl border step-idle transition flex flex-col items-center gap-1">
-        <span class="text-[10px] uppercase font-mono tracking-wider font-bold">Step 3</span>
-        <span>3. AI Extraction</span>
+      <div id="badge-step-3" class="py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold">
+        <span class="text-[9px] uppercase font-mono tracking-widest text-neutral-500">Step 03</span>
+        <span>Extraction</span>
       </div>
-      <div id="badge-step-4" class="py-2.5 px-1 rounded-xl border step-idle transition flex flex-col items-center gap-1">
-        <span class="text-[10px] uppercase font-mono tracking-wider font-bold">Step 4</span>
-        <span>4. LMPC Rules</span>
+      <div id="badge-step-4" class="py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold">
+        <span class="text-[9px] uppercase font-mono tracking-widest text-neutral-500">Step 04</span>
+        <span>Compliance</span>
       </div>
-      <div id="badge-step-5" class="py-2.5 px-1 rounded-xl border step-idle transition flex flex-col items-center gap-1">
-        <span class="text-[10px] uppercase font-mono tracking-wider font-bold">Step 5</span>
-        <span>5. Audit Report</span>
+      <div id="badge-step-5" class="py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold">
+        <span class="text-[9px] uppercase font-mono tracking-widest text-neutral-500">Step 05</span>
+        <span>Certificate</span>
       </div>
     </div>
 
     <!-- ================= STEP 1: CAPTURE / UPLOAD ================= -->
-    <div id="card-step-1" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-bold text-white">Step 1: Take Photo or Upload Packaging Images</h2>
-        <p class="text-sm text-slate-400">Use your camera directly or upload images of all packaging angles.</p>
+    <div id="card-step-1" class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="text-center space-y-1.5">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Capture Package Photographs</h2>
+        <p class="text-xs text-neutral-400 font-light">Use your camera directly or upload multi-angle photos of the commodity packaging.</p>
       </div>
 
       <!-- Action Choice: Camera vs File Upload -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
-        <!-- Open Live Camera Button -->
-        <button onclick="startLiveCamera()" class="p-5 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl text-left transition shadow-lg shadow-blue-600/20 space-y-2 group">
+        <!-- Live Camera Button -->
+        <button onclick="startLiveCamera()" class="glass-card-interactive p-5 rounded-2xl text-left space-y-3 group cursor-pointer">
           <div class="flex items-center justify-between">
-            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-              <i data-lucide="camera" class="w-5 h-5 text-white"></i>
+            <div class="w-10 h-10 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white">
+              <i data-lucide="camera" class="w-5 h-5"></i>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-white/20 text-white uppercase">Live</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 border border-white/15 text-white uppercase">Live Cam</span>
           </div>
           <div>
-            <span class="text-base font-bold block">Take Photo with Camera</span>
-            <span class="text-xs text-blue-100 block mt-0.5">Use webcam or mobile phone camera</span>
+            <span class="text-sm font-semibold text-white group-hover:text-white block">Take Photo with Camera</span>
+            <span class="text-xs text-neutral-400 font-light block mt-0.5">Capture via webcam or mobile lens</span>
           </div>
         </button>
 
-        <!-- Upload Files Button / Zone -->
-        <label class="p-5 bg-slate-950 hover:bg-slate-800 border border-slate-700 hover:border-blue-500 rounded-2xl text-left transition cursor-pointer space-y-2 block group">
+        <!-- Upload Files Button -->
+        <label class="glass-card-interactive p-5 rounded-2xl text-left cursor-pointer space-y-3 block group">
           <input type="file" id="file-input" accept="image/*" multiple onchange="handleMultiplePhotoUpload(this)" class="hidden">
           <div class="flex items-center justify-between">
-            <div class="w-10 h-10 rounded-xl bg-slate-800 group-hover:bg-blue-600/20 flex items-center justify-center text-slate-300 group-hover:text-blue-400 transition">
+            <div class="w-10 h-10 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white">
               <i data-lucide="upload-cloud" class="w-5 h-5"></i>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-slate-800 text-slate-400 uppercase">Browse</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 border border-white/15 text-white uppercase">Browse</span>
           </div>
           <div>
-            <span class="text-base font-bold text-white group-hover:text-blue-400 transition block">Upload from Device</span>
-            <span class="text-xs text-slate-400 block mt-0.5">Select multiple images (JPG, PNG)</span>
+            <span class="text-sm font-semibold text-white group-hover:text-white block">Upload from Device</span>
+            <span class="text-xs text-neutral-400 font-light block mt-0.5">Select multiple images (JPG, PNG)</span>
           </div>
         </label>
       </div>
 
-      <!-- Live Camera Viewfinder Modal / Section -->
-      <div id="camera-modal" class="hidden max-w-xl mx-auto bg-slate-950 border-2 border-blue-500/60 rounded-2xl p-4 space-y-3 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+      <!-- Live Camera Viewfinder Modal -->
+      <div id="camera-modal" class="hidden max-w-xl mx-auto glass-panel border border-white/20 rounded-2xl p-4 space-y-3 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-            <span class="text-xs font-bold text-white uppercase tracking-wider">Live Camera Feed</span>
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-white uppercase tracking-wider">Live Viewfinder</span>
           </div>
-          <button onclick="stopLiveCamera()" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition">
-            <i data-lucide="x" class="w-5 h-5"></i>
+          <button onclick="stopLiveCamera()" class="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
 
-        <div class="relative bg-black rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+        <div class="relative bg-black/80 rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-white/10">
           <video id="camera-stream" autoplay playsinline class="w-full h-full object-cover"></video>
-          <!-- Viewfinder Frame -->
-          <div class="absolute inset-6 border-2 border-dashed border-white/40 rounded-lg pointer-events-none flex flex-col justify-between p-2">
-            <span class="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-0.5 rounded w-max">Align package within box</span>
-            <span class="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-0.5 rounded w-max self-end">Ensure text is sharp</span>
+          <!-- Alignment Frame -->
+          <div class="absolute inset-6 border border-white/30 rounded-lg pointer-events-none flex flex-col justify-between p-2">
+            <span class="text-[10px] font-mono text-neutral-300 bg-black/60 px-2 py-0.5 rounded w-max backdrop-blur-md">Position packaging within frame</span>
+            <span class="text-[10px] font-mono text-neutral-300 bg-black/60 px-2 py-0.5 rounded w-max self-end backdrop-blur-md">Ensure text is legible</span>
           </div>
         </div>
 
         <div class="flex items-center justify-between pt-1">
-          <button onclick="stopLiveCamera()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">
+          <button onclick="stopLiveCamera()" class="btn-noir-secondary px-4 py-2 rounded-xl text-xs font-medium">
             Close Camera
           </button>
-          <button onclick="captureCameraSnapshot()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-blue-600/30">
+          <button onclick="captureCameraSnapshot()" class="btn-noir-primary px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
             <i data-lucide="camera" class="w-4 h-4"></i> Snap & Add to Tray
           </button>
         </div>
@@ -137,36 +232,36 @@
 
       <!-- Quick Demo Presets -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
-        <button onclick="useMultiPhotoPreset('clear')" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-xl text-left transition text-xs flex items-center justify-between group">
-          <span class="text-slate-300 group-hover:text-white font-medium">Load Preset Biscuit Packet (Demo)</span>
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-400"></i>
+        <button onclick="useMultiPhotoPreset('clear')" class="p-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.15] rounded-xl text-left transition text-xs flex items-center justify-between group">
+          <span class="text-neutral-300 group-hover:text-white font-medium">Load Demo Biscuit Packet</span>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition"></i>
         </button>
 
-        <button onclick="useMultiPhotoPreset('mixed')" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-xl text-left transition text-xs flex items-center justify-between group">
-          <span class="text-slate-300 group-hover:text-white font-medium">Load Mixed (Blurry Quality Test)</span>
+        <button onclick="useMultiPhotoPreset('mixed')" class="p-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.15] rounded-xl text-left transition text-xs flex items-center justify-between group">
+          <span class="text-neutral-300 group-hover:text-white font-medium">Load Mixed (Blurry Gate Test)</span>
           <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400"></i>
         </button>
       </div>
 
       <!-- Photo Tray Stack with Delete Buttons -->
-      <div class="max-w-xl mx-auto bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+      <div class="max-w-xl mx-auto bg-black/40 p-4 rounded-2xl border border-white/[0.08] space-y-3">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="images" class="w-4 h-4 text-blue-400"></i>
+          <span class="font-bold text-neutral-200 flex items-center gap-1.5">
+            <i data-lucide="images" class="w-4 h-4 text-neutral-400"></i>
             Uploaded Photos Tray
           </span>
-          <span id="photo-tray-count" class="font-mono text-slate-400">0 photo(s)</span>
+          <span id="photo-tray-count" class="font-mono text-neutral-500">0 photo(s)</span>
         </div>
 
         <div id="photo-tray-list" class="space-y-2">
-          <div class="p-4 text-center text-slate-500 text-xs">
-            No photos in tray. Take a live photo or upload images from device.
+          <div class="p-4 text-center text-neutral-500 text-xs font-light">
+            No photos in tray. Take a live photo or upload images above.
           </div>
         </div>
 
         <!-- Proceed Button -->
-        <div id="btn-proceed-photos-bar" class="hidden pt-3 border-t border-slate-800 flex justify-end">
-          <button onclick="goToStep(2)" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
+        <div id="btn-proceed-photos-bar" class="hidden pt-3 border-t border-white/[0.08] flex justify-end">
+          <button onclick="goToStep(2)" class="btn-noir-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2">
             Proceed with <span id="btn-photo-count-txt">0</span> Photos <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
@@ -174,88 +269,89 @@
     </div>
 
     <!-- ================= STEP 2: QUALITY CHECK ================= -->
-    <div id="card-step-2" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-bold text-white">Step 2: OpenCV Quality Gate Verification</h2>
-        <p class="text-sm text-slate-400">Review image quality metrics. You can remove any blurry photos before extraction.</p>
+    <div id="card-step-2" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="text-center space-y-1.5">
+        <h2 class="text-2xl font-bold text-white tracking-tight">OpenCV Quality Gate</h2>
+        <p class="text-xs text-neutral-400 font-light">Verifying blur variance, resolution, and glare before statutory OCR analysis.</p>
       </div>
 
       <div id="quality-cards-stack" class="max-w-xl mx-auto space-y-3"></div>
 
-      <div class="flex justify-center gap-3 pt-4 border-t border-slate-800">
-        <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl text-xs transition">
-          ← Take / Upload More Photos
+      <div class="flex justify-center gap-3 pt-4 border-t border-white/[0.08]">
+        <button onclick="goToStep(1)" class="btn-noir-secondary px-5 py-2.5 rounded-xl text-xs font-medium">
+          ← Upload More Photos
         </button>
-        <button id="btn-proceed-step3" onclick="executeStep3Extraction()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
+        <button id="btn-proceed-step3" onclick="executeStep3Extraction()" class="btn-noir-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2">
           Proceed to AI Extraction <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
 
     <!-- ================= STEP 3: EXTRACTION ================= -->
-    <div id="card-step-3" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-bold text-white">Step 3: Extracted Statutory Facts with Provenance</h2>
-        <p class="text-sm text-slate-400">Structured declarations extracted across all packaging views with exact image references.</p>
+    <div id="card-step-3" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="text-center space-y-1.5">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Extracted Statutory Facts</h2>
+        <p class="text-xs text-neutral-400 font-light">Structured declarations parsed across packaging angles with coordinate provenance.</p>
       </div>
 
       <div id="facts-table-container" class="max-w-2xl mx-auto space-y-2"></div>
 
-      <div class="flex justify-center gap-3 pt-4 border-t border-slate-800">
-        <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl text-xs transition">
+      <div class="flex justify-center gap-3 pt-4 border-t border-white/[0.08]">
+        <button onclick="goToStep(2)" class="btn-noir-secondary px-5 py-2.5 rounded-xl text-xs font-medium">
           ← Back
         </button>
-        <button onclick="executeStep4Compliance()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
-          Run Deterministic Legal Metrology Engine <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button onclick="executeStep4Compliance()" class="btn-noir-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2">
+          Run Deterministic LMPC Engine <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
 
     <!-- ================= STEP 4: COMPLIANCE DECISIONS ================= -->
-    <div id="card-step-4" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl font-bold text-white">Step 4: Deterministic Compliance Decisions</h2>
-        <p class="text-sm text-slate-400">Evaluated deterministically in Python against Legal Metrology Rules, 2011.</p>
+    <div id="card-step-4" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="text-center space-y-1.5">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Deterministic Legal Compliance</h2>
+        <p class="text-xs text-neutral-400 font-light">Evaluated deterministically in Python against Legal Metrology Rules, 2011.</p>
       </div>
 
       <div id="compliance-cards-container" class="max-w-2xl mx-auto space-y-3"></div>
 
-      <div class="flex justify-center gap-3 pt-4 border-t border-slate-800">
-        <button onclick="goToStep(3)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl text-xs transition">
+      <div class="flex justify-center gap-3 pt-4 border-t border-white/[0.08]">
+        <button onclick="goToStep(3)" class="btn-noir-secondary px-5 py-2.5 rounded-xl text-xs font-medium">
           ← Back
         </button>
-        <button onclick="goToStep(5)" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+        <button onclick="goToStep(5)" class="btn-noir-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2">
           Generate Final Audit Report <i data-lucide="file-text" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
 
     <!-- ================= STEP 5: AUDIT REPORT ================= -->
-    <div id="card-step-5" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <div id="card-step-5" class="hidden glass-panel rounded-3xl p-6 space-y-6 shadow-2xl">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
         <div>
-          <h2 class="text-xl font-bold text-white">Step 5: Official Inspection Certificate</h2>
-          <p class="text-xs text-slate-400">Auditable report ready for printing or legal archive.</p>
+          <h2 class="text-2xl font-bold text-white tracking-tight">Official Inspection Certificate</h2>
+          <p class="text-xs text-neutral-400 font-light">Auditable inspection certificate ready for legal archive or PDF export.</p>
         </div>
         <div class="flex gap-2">
-          <button onclick="downloadPdfReport()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-md shadow-blue-600/20">
+          <button onclick="downloadPdfReport()" class="btn-noir-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
             <i data-lucide="download" class="w-4 h-4"></i> Download PDF
           </button>
-          <button onclick="resetInspection()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+          <button onclick="resetInspection()" class="btn-noir-secondary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
             <i data-lucide="plus" class="w-4 h-4"></i> New Inspection
           </button>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-xl overflow-hidden min-h-[600px]">
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[600px] border border-white/10">
         <iframe id="report-frame" src="" class="w-full min-h-[650px] border-none"></iframe>
       </div>
     </div>
 
   </main>
 
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-3 text-center text-xs text-slate-500 font-mono">
-    SIH26034 • AI reads observations. Deterministic code enforces compliance.
+  <!-- Glass Noir Footer -->
+  <footer class="border-t border-white/[0.08] bg-[#050505]/80 py-3 text-center text-xs text-neutral-500 font-mono">
+    INSIST • AI reads statutory observations. Deterministic code enforces compliance.
   </footer>
 
   <script>
@@ -271,11 +367,11 @@
         document.getElementById('card-step-' + i).classList.add('hidden');
         const b = document.getElementById('badge-step-' + i);
         if (i === stepNum) {
-          b.className = 'py-2.5 px-1 rounded-xl border step-active transition flex flex-col items-center gap-1';
+          b.className = 'py-3 px-1 rounded-2xl border step-active transition-all flex flex-col items-center gap-1 font-semibold';
         } else if (i < stepNum) {
-          b.className = 'py-2.5 px-1 rounded-xl border step-done transition flex flex-col items-center gap-1';
+          b.className = 'py-3 px-1 rounded-2xl border step-done transition-all flex flex-col items-center gap-1 font-semibold';
         } else {
-          b.className = 'py-2.5 px-1 rounded-xl border step-idle transition flex flex-col items-center gap-1';
+          b.className = 'py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold';
         }
       }
       document.getElementById('card-step-' + stepNum).classList.remove('hidden');
@@ -324,7 +420,7 @@
           const video = document.getElementById('camera-stream');
           video.srcObject = mediaStream;
         } catch (e) {
-          alert('Could not access camera: ' + e.message + '. Please ensure camera permissions are granted.');
+          alert('Could not access camera: ' + e.message + '. Please check camera permissions.');
           stopLiveCamera();
         }
       }
@@ -468,27 +564,27 @@
       document.getElementById('btn-photo-count-txt').innerText = uploadedPhotos.length;
 
       if (uploadedPhotos.length === 0) {
-        container.innerHTML = '<div class="p-4 text-center text-slate-500 text-xs">No photos in tray. Take a live photo or upload images from device.</div>';
+        container.innerHTML = '<div class="p-4 text-center text-neutral-500 text-xs font-light">No photos in tray. Take a live photo or upload images above.</div>';
         document.getElementById('btn-proceed-photos-bar').classList.add('hidden');
         return;
       }
 
       uploadedPhotos.forEach((p, idx) => {
         const item = document.createElement('div');
-        item.className = 'p-2.5 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-xs transition hover:border-slate-700';
+        item.className = 'p-3 bg-white/[0.03] rounded-xl border border-white/[0.08] flex items-center justify-between text-xs transition hover:border-white/20';
         item.innerHTML = `
           <div class="flex items-center gap-3">
-            <span class="w-5 h-5 rounded-full bg-blue-600/30 text-blue-400 font-bold font-mono text-[10px] flex items-center justify-center">${idx + 1}</span>
+            <span class="w-5 h-5 rounded-full bg-white/10 text-white font-bold font-mono text-[10px] flex items-center justify-center">${idx + 1}</span>
             <div>
-              <span class="font-bold text-white block">${p.view}</span>
-              <span class="text-[10px] text-slate-400 font-mono">${p.name || p.id}</span>
+              <span class="font-semibold text-white block">${p.view}</span>
+              <span class="text-[10px] text-neutral-400 font-mono">${p.name || p.id}</span>
             </div>
           </div>
           <div class="flex items-center gap-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${p.quality.usable ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'}">
               ${p.quality.quality_status} (${Math.round(p.quality.quality_score * 100)}%)
             </span>
-            <button onclick="removePhoto(${idx})" title="Remove photo" class="p-1 rounded hover:bg-rose-600/20 text-slate-400 hover:text-rose-400 transition">
+            <button onclick="removePhoto(${idx})" title="Remove photo" class="p-1 rounded hover:bg-rose-500/20 text-neutral-400 hover:text-rose-400 transition">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </div>
@@ -505,7 +601,7 @@
       stack.innerHTML = '';
 
       if (uploadedPhotos.length === 0) {
-        stack.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs">No photos to evaluate. Go back to upload photos.</div>';
+        stack.innerHTML = '<div class="p-4 text-center text-neutral-400 text-xs font-light">No photos to evaluate. Go back to upload photos.</div>';
         return;
       }
 
@@ -516,7 +612,7 @@
         if (!q.usable) hasUnusable = true;
 
         const card = document.createElement('div');
-        card.className = `p-4 rounded-xl border ${q.usable ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-rose-950/20 border-rose-500/40'}`;
+        card.className = `p-4 rounded-2xl border ${q.usable ? 'bg-emerald-950/15 border-emerald-500/30' : 'bg-rose-950/20 border-rose-500/40'}`;
         card.innerHTML = `
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -524,19 +620,19 @@
               <span class="font-bold text-sm text-white">${p.view}: ${p.name || 'Photo'}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded text-[11px] font-black font-mono uppercase ${q.usable ? 'bg-emerald-500 text-slate-950' : 'bg-rose-600 text-white'}">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono uppercase ${q.usable ? 'bg-emerald-500 text-black' : 'bg-rose-600 text-white'}">
                 ${q.quality_status} (${Math.round(q.quality_score * 100)}%)
               </span>
-              <button onclick="removePhoto(${idx})" title="Remove photo" class="p-1 rounded hover:bg-rose-600/30 text-slate-400 hover:text-rose-400 transition">
+              <button onclick="removePhoto(${idx})" title="Remove photo" class="p-1 rounded hover:bg-rose-600/30 text-neutral-400 hover:text-rose-400 transition">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
           </div>
-          <div class="text-xs text-slate-400 font-mono mt-2 flex gap-4">
+          <div class="text-xs text-neutral-400 font-mono mt-2 flex gap-4">
             <span>Laplacian Var: ${q.blur_metric}</span>
             <span>Brightness: ${q.brightness_metric}</span>
           </div>
-          ${!q.usable ? '<p class="text-xs text-rose-400 font-bold mt-1">⚠ Quality below threshold. Remove or retake this photo before proceeding.</p>' : ''}
+          ${!q.usable ? '<p class="text-xs text-rose-400 font-bold mt-1.5">⚠ Image below sharpness threshold. Remove or retake before proceeding.</p>' : ''}
         `;
         stack.appendChild(card);
       });
@@ -559,16 +655,16 @@
       container.innerHTML = '';
       cachedData.facts.forEach(f => {
         const item = document.createElement('div');
-        item.className = 'p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs';
+        item.className = 'p-3.5 bg-white/[0.03] rounded-2xl border border-white/[0.08] flex items-center justify-between text-xs hover:border-white/20 transition';
         item.innerHTML = `
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-mono text-blue-400 font-bold uppercase">${f.field_name}</span>
-              <span class="text-[10px] text-slate-400 font-mono">(${f.source_view_type || 'Package Photo'})</span>
+              <span class="font-mono text-neutral-300 font-bold uppercase tracking-wider">${f.field_name}</span>
+              <span class="text-[10px] text-neutral-500 font-mono">(${f.source_view_type || 'Package Photo'})</span>
             </div>
-            <div class="text-white font-semibold text-sm mt-0.5">${f.value}</div>
+            <div class="text-white font-semibold text-sm mt-1">${f.value}</div>
           </div>
-          <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">Conf: ${Math.round(f.confidence * 100)}%</span>
+          <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono bg-white/[0.06] border border-white/10 text-neutral-300">Conf: ${Math.round(f.confidence * 100)}%</span>
         `;
         container.appendChild(item);
       });
@@ -580,22 +676,22 @@
       container.innerHTML = '';
 
       cachedData.compliance_results.forEach(r => {
-        const badgeColor = r.status === 'PASS' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                           r.status === 'FAIL' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' :
-                           'bg-amber-500/20 text-amber-400 border-amber-500/30';
+        const badgeColor = r.status === 'PASS' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                           r.status === 'FAIL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
+                           'bg-amber-500/10 text-amber-400 border-amber-500/30';
 
         const card = document.createElement('div');
-        card.className = 'p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-start justify-between gap-4';
+        card.className = 'p-4 bg-white/[0.03] rounded-2xl border border-white/[0.08] flex items-start justify-between gap-4 hover:border-white/20 transition';
         card.innerHTML = `
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-mono text-xs font-bold text-slate-400">${r.rule_id}</span>
+              <span class="font-mono text-xs font-bold text-neutral-400">${r.rule_id}</span>
               <span class="text-sm font-bold text-white">${r.requirement}</span>
             </div>
-            <p class="text-xs text-slate-300 mt-1 font-mono">Observed: <span class="text-white font-semibold">${r.observed_value || '—'}</span></p>
-            <p class="text-xs text-slate-400 mt-0.5">${r.reason}</p>
+            <p class="text-xs text-neutral-300 mt-1.5 font-mono">Observed: <span class="text-white font-semibold">${r.observed_value || '—'}</span></p>
+            <p class="text-xs text-neutral-400 mt-0.5 font-light">${r.reason}</p>
           </div>
-          <span class="px-3 py-1 rounded-lg text-xs font-black font-mono border ${badgeColor}">${r.status}</span>
+          <span class="px-3 py-1 rounded-xl text-xs font-black font-mono border ${badgeColor}">${r.status}</span>
         `;
         container.appendChild(card);
       });
