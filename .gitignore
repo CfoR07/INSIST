@@ -1,0 +1,14 @@
+﻿# .gitignore for SIH26034
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.db
+*.sqlite
+node_modules/
+dist/
+build/
+.vscode/
+.idea/
+PaddleOCR-3.7.0/
+reports/*.pdf
