@@ -176,3 +176,114 @@ def generate_pdf_report(inspection: Dict[str, Any], results: List[Dict[str, Any]
     
     doc.build(story)
     return output_path
+
+def generate_pptx_report(inspection: Dict[str, Any], results: List[Dict[str, Any]], output_path: str):
+    from pptx import Presentation
+    from pptx.util import Inches, Pt
+    from pptx.dml.color import RGBColor
+    from pptx.enum.text import PP_ALIGN
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    prs = Presentation()
+    prs.slide_width = Inches(13.333)
+    prs.slide_height = Inches(7.5)
+
+    # 1. Slide 1: Title Slide (Liquid Dark Noir)
+    blank_slide_layout = prs.slide_layouts[6]
+    slide1 = prs.slides.add_slide(blank_slide_layout)
+    
+    # Background shape
+    bg = slide1.shapes.add_shape(1, 0, 0, prs.slide_width, prs.slide_height)
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = RGBColor(15, 23, 42)
+    bg.line.fill.background()
+
+    txBox = slide1.shapes.add_textbox(Inches(1.0), Inches(2.2), Inches(11.3), Inches(3.0))
+    tf = txBox.text_frame
+    tf.word_wrap = True
+
+    p = tf.paragraphs[0]
+    p.text = "INSIST"
+    p.font.size = Pt(48)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(255, 255, 255)
+
+    p2 = tf.add_paragraph()
+    p2.text = "Legal Metrology Packaged Commodities Inspection Audit"
+    p2.font.size = Pt(24)
+    p2.font.color.rgb = RGBColor(96, 165, 250)
+    p2.space_before = Pt(12)
+
+    p3 = tf.add_paragraph()
+    p3.text = f"Inspection ID: {inspection.get('id')}  |  Product: {inspection.get('product_name', 'Commodity')}  |  Officer: {inspection.get('officer_id', 'OFFICER-001')}"
+    p3.font.size = Pt(14)
+    p3.font.color.rgb = RGBColor(203, 213, 225)
+    p3.space_before = Pt(20)
+
+    # 2. Slide 2: Compliance Results Matrix
+    slide2 = prs.slides.add_slide(blank_slide_layout)
+    bg2 = slide2.shapes.add_shape(1, 0, 0, prs.slide_width, prs.slide_height)
+    bg2.fill.solid()
+    bg2.fill.fore_color.rgb = RGBColor(15, 23, 42)
+    bg2.line.fill.background()
+
+    # Header
+    tx_header = slide2.shapes.add_textbox(Inches(0.8), Inches(0.5), Inches(11.7), Inches(0.8))
+    tf_h = tx_header.text_frame
+    p_h = tf_h.paragraphs[0]
+    p_h.text = "LMPC Rules 2011 Compliance Audit Results"
+    p_h.font.size = Pt(22)
+    p_h.font.bold = True
+    p_h.font.color.rgb = RGBColor(255, 255, 255)
+
+    # Table
+    rows = len(results) + 1
+    cols = 5
+    table_shape = slide2.shapes.add_table(rows, cols, Inches(0.8), Inches(1.5), Inches(11.7), Inches(5.2))
+    table = table_shape.table
+
+    headers = ["Rule ID", "Statutory Requirement", "Observed Fact", "Verdict", "Validation Reason"]
+    widths = [Inches(1.5), Inches(3.2), Inches(2.0), Inches(1.2), Inches(3.8)]
+    for i, w in enumerate(widths):
+        table.columns[i].width = w
+
+    for i, h in enumerate(headers):
+        cell = table.cell(0, i)
+        cell.text = h
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = RGBColor(30, 41, 59)
+        for p in cell.text_frame.paragraphs:
+            p.font.bold = True
+            p.font.size = Pt(11)
+            p.font.color.rgb = RGBColor(255, 255, 255)
+
+    for row_idx, r in enumerate(results, start=1):
+        vals = [
+            r.get("rule_id", ""),
+            r.get("requirement", "")[:45],
+            str(r.get("observed_value", ""))[:25],
+            r.get("status", ""),
+            r.get("reason", "")[:60]
+        ]
+        for col_idx, val in enumerate(vals):
+            cell = table.cell(row_idx, col_idx)
+            cell.text = str(val)
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = RGBColor(24, 32, 47) if row_idx % 2 == 0 else RGBColor(30, 41, 59)
+            for p in cell.text_frame.paragraphs:
+                p.font.size = Pt(9.5)
+                if col_idx == 3:
+                    if val == "PASS":
+                        p.font.color.rgb = RGBColor(52, 211, 153)
+                        p.font.bold = True
+                    elif val == "FAIL":
+                        p.font.color.rgb = RGBColor(248, 113, 113)
+                        p.font.bold = True
+                    else:
+                        p.font.color.rgb = RGBColor(251, 191, 36)
+                else:
+                    p.font.color.rgb = RGBColor(241, 245, 249)
+
+    prs.save(output_path)
+    return output_path
+

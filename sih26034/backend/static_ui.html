@@ -604,6 +604,9 @@
               <button onclick="downloadPdfReport()" class="btn-primary">
                 <i data-lucide="download" class="w-4 h-4"></i> PDF
               </button>
+              <button onclick="downloadPptxReport()" class="btn-secondary text-amber-300 border-amber-500/40 hover:bg-amber-500/20">
+                <i data-lucide="presentation" class="w-4 h-4"></i> PPT
+              </button>
               <button onclick="resetInspection()" class="btn-secondary">
                 <i data-lucide="plus" class="w-4 h-4"></i> Reset
               </button>
@@ -1160,6 +1163,10 @@
 
     function downloadPdfReport() {
       if (inspId) window.open('/api/inspections/' + inspId + '/report/pdf', '_blank');
+    }
+
+    function downloadPptxReport() {
+      if (inspId) window.open('/api/inspections/' + inspId + '/report/pptx', '_blank');
     }
 
     function resetInspection() {

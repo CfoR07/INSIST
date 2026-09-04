@@ -325,6 +325,22 @@ def get_report_pdf_endpoint(inspection_id: str):
     rep.generate_pdf_report(insp, results, pdf_path)
     return FileResponse(pdf_path, media_type="application/pdf", filename=f"Inspection_Report_{inspection_id}.pdf")
 
+@app.get("/api/inspections/{inspection_id}/report/pptx")
+@app.get("/api/inspections/{inspection_id}/report/ppt")
+def get_report_pptx_endpoint(inspection_id: str):
+    insp = db.get_inspection(inspection_id)
+    if not insp:
+        raise HTTPException(status_code=404, detail="Inspection not found")
+    results = db.get_compliance_results(inspection_id)
+    
+    pptx_path = os.path.join(REPORTS_DIR, f"report_{inspection_id}.pptx")
+    rep.generate_pptx_report(insp, results, pptx_path)
+    return FileResponse(
+        pptx_path,
+        media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        filename=f"Inspection_Presentation_{inspection_id}.pptx"
+    )
+
 @app.get("/api/dashboard/stats")
 def get_dashboard_stats_endpoint():
     return db.get_dashboard_metrics()
