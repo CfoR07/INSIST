@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 import cv2
 import numpy as np
@@ -96,6 +96,9 @@ def extract_facts_from_image(image_path: str, view_type: str, image_id: str, ins
 
     # Product Identification & Brand Recognition
     known_brands = [
+        ("mantra", "24 Mantra Organic Peanut Chikki", "Food / Packaged Sweets & Confectionery"),
+        ("chikki", "24 Mantra Organic Peanut Chikki", "Food / Packaged Sweets & Confectionery"),
+        ("sresta", "24 Mantra Organic Product (Sresta)", "Food / Organic Commodities"),
         ("Kellogg", "Kellogg's Chocos / Breakfast Cereal", "Food / Breakfast Cereals"),
         ("PRAN", "PRAN Potata Spicy Biscuit Pack", "Food / Packaged Snacks"),
         ("Parle", "Parle-G Glucose Biscuit Pack", "Food / Biscuits & Confectionery"),
