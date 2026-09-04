@@ -245,6 +245,8 @@ def analyze_inspection_endpoint(inspection_id: str):
         "inspection_id": inspection_id,
         "status": final_status,
         "product_context": context,
+        "facts": all_facts,
+        "compliance_results": compliance_results,
         "facts_count": len(all_facts),
         "rules_evaluated": len(compliance_results),
         "has_uncertain_cases": has_uncertain

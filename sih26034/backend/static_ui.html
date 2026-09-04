@@ -1101,30 +1101,12 @@
       lucide.createIcons();
 
       try {
-        const res = await fetch(`/api/inspections/${inspId}/run-full-check`, { method: 'POST' });
+        const res = await fetch(`/api/inspections/${inspId}/analyze`, { method: 'POST' });
         cachedData = await res.json();
         renderStep3Facts();
       } catch (e) {
-        cachedData = {
-          facts: [
-            { field_name: "PRODUCT_NAME", value: "Kellogg's Chocos Moons & Stars", confidence: 0.98, source_view_type: "Front Angle" },
-            { field_name: "NET_QUANTITY", value: "375 g", confidence: 0.96, source_view_type: "Front Panel" },
-            { field_name: "MRP", value: "Rs. 195.00 (Incl. of all taxes)", confidence: 0.99, source_view_type: "Side Panel" },
-            { field_name: "UNIT_SALE_PRICE", value: "Rs. 0.52 / g", confidence: 0.95, source_view_type: "Side Panel" },
-            { field_name: "MFG_DATE", value: "18/08/2026", confidence: 0.94, source_view_type: "Back Panel" },
-            { field_name: "CONSUMER_CARE", value: "care@kelloggs.com | 1800-425-3399", confidence: 0.97, source_view_type: "Side Panel" },
-            { field_name: "VEG_NONVEG_LOGO", value: "VEG", confidence: 0.99, source_view_type: "Front Icon" }
-          ],
-          compliance_results: [
-            { rule_id: "Rule 6(1)(a)", requirement: "Generic Name of Commodity", status: "PASS", observed_value: "Kellogg's Chocos Moons & Stars", reason: "Clearly declared on principal display panel." },
-            { rule_id: "Rule 6(1)(b)", requirement: "Net Quantity Declaration", status: "PASS", observed_value: "375 g", reason: "Standard metric unit declared in accordance with Schedule II." },
-            { rule_id: "Rule 6(1)(c)", requirement: "Maximum Retail Price (MRP)", status: "PASS", observed_value: "Rs. 195.00", reason: "Inclusive of all taxes explicitly stated." },
-            { rule_id: "Rule 6(1)(m)", requirement: "Unit Sale Price (USP)", status: "PASS", observed_value: "Rs. 0.52 / g", reason: "Correctly rounded and declared per gram." },
-            { rule_id: "Rule 6(1)(d)", requirement: "Month & Year of Manufacture", status: "PASS", observed_value: "18/08/2026", reason: "Valid manufacturing date present." },
-            { rule_id: "Rule 6(1)(e)", requirement: "Consumer Care Contact", status: "PASS", observed_value: "care@kelloggs.com", reason: "Valid email and helpline provided." }
-          ]
-        };
-        renderStep3Facts();
+        console.error("Extraction error:", e);
+        alert("Failed to connect to extraction engine. Please try again.");
       }
     }
 
