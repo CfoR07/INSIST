@@ -36,12 +36,12 @@ def assess_image_quality(image_path: str) -> Dict[str, Any]:
     elif is_too_dark:
         status = 'TOO_DARK'
         usable = False
-    elif quality_score >= 0.70:
-        status = 'SHARP'
+    elif quality_score >= 0.75:
+        status = 'PASS'
         usable = True
     else:
-        status = 'USABLE'
-        usable = True
+        status = 'LOW_QUALITY'
+        usable = False
         
     return {
         'quality_status': status,
