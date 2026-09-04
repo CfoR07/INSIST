@@ -13,51 +13,50 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       SECTOR82 Glass Noir Design System Tokens & Global Styles
+       GLASS NOIR — Frosted Dark Liquid Glass Specification
        ========================================================================== */
     :root {
-      /* Surface Colors */
-      --bg-primary: #050505;
-      --bg-card: rgba(12, 12, 12, 0.35);
-      --bg-card-hover: rgba(255, 255, 255, 0.055);
-      --bg-input: rgba(0, 0, 0, 0.25);
-      
-      /* Glass Optics & Borders */
-      --card-blur: 35px;
-      --card-border: rgba(255, 255, 255, 0.10);
-      --card-border-hover: rgba(255, 255, 255, 0.22);
-      --card-border-focus: rgba(255, 255, 255, 0.35);
-      
-      /* Typography / Opacity Levels */
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.72);
-      --text-muted: rgba(255, 255, 255, 0.45);
-      --text-dim: rgba(255, 255, 255, 0.28);
-      
-      /* Accent & Specular Highlights */
-      --accent: #ffffff;
-      --accent-glow: rgba(255, 255, 255, 0.08);
-      
-      /* Radii */
-      --radius-window: 24px;
-      --radius-card: 18px;
-      --radius-inner: 12px;
-      --radius-pill: 9999px;
-      
-      /* Typography */
-      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      
-      /* Multi-Layer Shadows (Top Inset Rim Light + Deep Ambient Drop) */
-      --shadow-glass-shell: inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.20),
-                            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.30),
-                            0 40px 100px rgba(0, 0, 0, 0.60);
+      /* Surface & Optics */
+      --glass-bg-canvas: #050608;
+      --glass-bg-shell: rgba(8, 10, 14, 0.28);
+      --glass-bg-card: rgba(14, 16, 22, 0.32);
+      --glass-bg-card-hover: rgba(255, 255, 255, 0.055);
+      --glass-bg-input: rgba(0, 0, 0, 0.30);
 
-      --shadow-glass-panel: inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-                            inset 0 -1px 0 0 rgba(0, 0, 0, 0.20),
-                            0 24px 60px rgba(0, 0, 0, 0.40);
+      /* Frost Blur Strengths */
+      --glass-blur-shell: 40px;
+      --glass-blur-card: 32px;
+      --glass-blur-dock: 28px;
 
-      /* Animation Easings */
+      /* Glass Edge Chamfer & Inset Refractions */
+      --glass-border: rgba(255, 255, 255, 0.11);
+      --glass-border-hover: rgba(255, 255, 255, 0.24);
+      --glass-border-active: rgba(255, 255, 255, 0.38);
+
+      /* Refraction Shadows (Top Inset Highlight + Ambient Depth) */
+      --glass-shadow-shell: 
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.20),
+        inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.40),
+        0 30px 90px rgba(0, 0, 0, 0.65);
+
+      --glass-shadow-card: 
+        inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25),
+        0 20px 50px rgba(0, 0, 0, 0.35);
+
+      /* Typography Colors */
+      --glass-text-primary: #ffffff;
+      --glass-text-secondary: rgba(255, 255, 255, 0.74);
+      --glass-text-muted: rgba(255, 255, 255, 0.45);
+      --glass-text-faint: rgba(255, 255, 255, 0.25);
+
+      /* Curvature */
+      --glass-radius-shell: 24px;
+      --glass-radius-card: 16px;
+      --glass-radius-inner: 10px;
+      --glass-radius-pill: 9999px;
+
+      /* Spring Physics */
       --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
       --transition-fast: 0.16s var(--ease-spring);
       --transition-smooth: 0.24s var(--ease-spring);
@@ -78,9 +77,9 @@
     }
 
     body {
-      font-family: var(--font-sans);
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--glass-bg-canvas);
+      color: var(--glass-text-primary);
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
@@ -88,65 +87,78 @@
     }
 
     .font-mono {
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Ambient atmospheric background */
-    .ambient-mesh {
+    /* Top Sunlight Rim Bloom (The Ambient Light Source) */
+    .glass-ambient-lighting {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 60vh;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.05), transparent 50%),
-                  radial-gradient(circle at 90% 60%, rgba(255, 255, 255, 0.02), transparent 40%);
+      background: radial-gradient(
+        circle at 50% -10%,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.04) 35%,
+        rgba(255, 255, 255, 0.008) 65%,
+        transparent 100%
+      );
     }
 
-    /* Master Glass Window / Panel */
-    .glass-panel {
-      background: var(--bg-card);
-      backdrop-filter: blur(var(--card-blur));
-      -webkit-backdrop-filter: blur(var(--card-blur));
-      border: 1px solid var(--card-border);
-      box-shadow: var(--shadow-glass-panel);
-      border-radius: var(--radius-card);
-      transition: border-color var(--transition-smooth),
-                  background var(--transition-smooth),
-                  box-shadow var(--transition-smooth);
+    /* Glass Noir Master Panel / Window */
+    .glass-noir-panel {
+      background: var(--glass-bg-card);
+      backdrop-filter: blur(var(--glass-blur-card)) saturate(130%);
+      -webkit-backdrop-filter: blur(var(--glass-blur-card)) saturate(130%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow-card);
+      border-radius: var(--glass-radius-card);
+      transition: 
+        background var(--transition-smooth),
+        border-color var(--transition-smooth),
+        box-shadow var(--transition-smooth),
+        transform var(--transition-smooth);
     }
 
-    .glass-panel:hover {
-      background: rgba(18, 18, 18, 0.45);
-      border-color: var(--card-border-hover);
+    .glass-noir-panel:hover {
+      background: rgba(22, 26, 36, 0.42);
+      border-color: var(--glass-border-hover);
+      box-shadow: 
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.20),
+        0 24px 60px rgba(0, 0, 0, 0.45);
     }
 
-    /* Interactive List Row with Horizontal Side-Pop */
-    .task-row-item {
+    /* Interactive List Row with Horizontal Spring Side-Pop */
+    .glass-noir-row {
       display: flex;
       align-items: center;
       width: 100%;
       padding: 14px 18px;
-      border-radius: var(--radius-inner);
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--text-primary);
+      border-radius: var(--glass-radius-inner);
+      background: rgba(255, 255, 255, 0.022);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--glass-text-primary);
       cursor: pointer;
       transform: translateZ(0);
       will-change: transform, background, border-color;
-      transition: transform 0.18s var(--ease-spring),
-                  background 0.18s var(--ease-spring),
-                  border-color 0.18s var(--ease-spring),
-                  box-shadow 0.18s var(--ease-spring);
+      transition: 
+        transform 0.18s var(--ease-spring),
+        background 0.18s var(--ease-spring),
+        border-color 0.18s var(--ease-spring),
+        box-shadow 0.18s var(--ease-spring);
     }
 
-    .task-row-item:hover {
+    .glass-noir-row:hover {
       transform: translateX(6px);
-      background: var(--bg-card-hover);
-      border-color: var(--card-border-hover);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+      background: var(--glass-bg-card-hover);
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .task-row-item:active {
+    .glass-noir-row:active {
       transform: translateX(2px) scale(0.995);
       transition-duration: 0.06s;
     }
@@ -168,10 +180,10 @@
     .step-idle {
       border-color: rgba(255, 255, 255, 0.05);
       background: rgba(255, 255, 255, 0.02);
-      color: var(--text-muted);
+      color: var(--glass-text-muted);
     }
 
-    /* Solid High-Contrast White Primary Button */
+    /* High Contrast White Solid Button */
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -179,22 +191,22 @@
       gap: 8px;
       background: #ffffff;
       border: 1px solid #ffffff;
-      color: #050505;
+      color: #050608;
       padding: 10px 22px;
-      border-radius: var(--radius-inner);
+      border-radius: var(--glass-radius-inner);
       cursor: pointer;
       font-weight: 600;
       font-size: 0.88rem;
       transition: transform var(--transition-fast),
                   background var(--transition-fast),
                   box-shadow var(--transition-fast);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.18);
     }
 
     .btn-primary:hover {
       background: rgba(255, 255, 255, 0.88);
       transform: translateY(-1px);
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.28);
     }
 
     .btn-primary:active {
@@ -208,10 +220,10 @@
       justify-content: center;
       gap: 8px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+      color: var(--glass-text-primary);
       padding: 10px 20px;
-      border-radius: var(--radius-inner);
+      border-radius: var(--glass-radius-inner);
       cursor: pointer;
       font-weight: 500;
       font-size: 0.88rem;
@@ -222,27 +234,67 @@
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.10);
-      border-color: var(--card-border-hover);
+      border-color: var(--glass-border-hover);
       transform: translateY(-1px);
     }
 
     .btn-secondary:active {
       transform: scale(0.96);
     }
+
+    /* Translucent Inset Input Fields */
+    .glass-noir-input {
+      color-scheme: dark;
+      width: 100%;
+      background: var(--glass-bg-input);
+      border: 1px solid var(--glass-border);
+      color: var(--glass-text-primary);
+      padding: 10px 16px;
+      border-radius: var(--glass-radius-inner);
+      outline: none;
+      font-size: 0.88rem;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+      transition: 
+        border-color 0.16s var(--ease-spring),
+        background 0.16s var(--ease-spring),
+        box-shadow 0.16s var(--ease-spring);
+    }
+
+    .glass-noir-input:focus {
+      border-color: var(--glass-border-active);
+      background: rgba(0, 0, 0, 0.45);
+      box-shadow: 
+        inset 0 1px 2px rgba(0, 0, 0, 0.4),
+        0 0 0 1px var(--glass-border-active);
+    }
+
+    select option {
+      background-color: #0d0e14;
+      color: #ffffff;
+    }
+
+    /* Camera Flash Animation */
+    @keyframes camera-flash {
+      0% { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+    .camera-flash-active {
+      animation: camera-flash 0.35s ease-out forwards;
+    }
   </style>
 </head>
 <body class="flex flex-col justify-between relative selection:bg-white selection:text-black">
 
-  <!-- Ambient Light Mesh Overlay -->
-  <div class="ambient-mesh"></div>
+  <!-- Top Sunlight Rim Bloom Ambient Light -->
+  <div class="glass-ambient-lighting"></div>
 
   <!-- Glass Noir Header -->
-  <header class="border-b border-white/[0.08] bg-[#050505]/80 backdrop-blur-2xl px-6 py-4 sticky top-0 z-50">
+  <header class="border-b border-white/[0.08] bg-[#050608]/75 backdrop-blur-2xl px-6 py-4 sticky top-0 z-50">
     <div class="max-w-4xl mx-auto flex items-center justify-between">
       <!-- Logo + Brand -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl border border-white/[0.15] bg-white/[0.04] p-1.5 flex items-center justify-center shadow-lg shadow-black/80 overflow-hidden backdrop-blur-md">
-          <img src="/logo.png" alt="INSIST Logo" class="w-full h-full object-contain rounded-xl" onerror="this.src='/favicon.png'" />
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl border border-white/[0.18] bg-white/[0.06] p-1 flex items-center justify-center shadow-lg shadow-black/80 overflow-hidden backdrop-blur-md">
+          <img src="/logo.png?v=3" alt="INSIST Logo" class="w-full h-full object-contain rounded-lg filter drop-shadow" onerror="this.src='/insist.png'" />
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -289,7 +341,7 @@
     </div>
 
     <!-- ================= STEP 1: CAPTURE / UPLOAD ================= -->
-    <div id="card-step-1" class="glass-panel p-6 sm:p-8 space-y-6">
+    <div id="card-step-1" class="glass-noir-panel p-6 sm:p-8 space-y-6">
       <div class="text-center space-y-1.5">
         <h2 class="text-2xl font-bold text-white tracking-tight">Capture Package Photographs</h2>
         <p class="text-xs text-neutral-400 font-light">Use your camera directly or upload multi-angle photos of the commodity packaging.</p>
@@ -297,8 +349,8 @@
 
       <!-- Action Choice: Camera vs File Upload -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
-        <!-- Live Camera Button with Side-Pop -->
-        <button onclick="startLiveCamera()" class="task-row-item flex-col items-start gap-3 p-5 rounded-2xl group cursor-pointer text-left">
+        <!-- Live Camera Button with Spring Side-Pop -->
+        <button onclick="startLiveCamera()" class="glass-noir-row flex-col items-start gap-3 p-5 rounded-2xl group cursor-pointer text-left">
           <div class="flex items-center justify-between w-full">
             <div class="w-10 h-10 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white">
               <i data-lucide="camera" class="w-5 h-5"></i>
@@ -307,12 +359,12 @@
           </div>
           <div>
             <span class="text-sm font-semibold text-white block">Take Photo with Camera</span>
-            <span class="text-xs text-neutral-400 font-light block mt-0.5">Capture via webcam or mobile lens</span>
+            <span class="text-xs text-neutral-400 font-light block mt-0.5">Select webcam or multi-camera lenses</span>
           </div>
         </button>
 
-        <!-- Upload Files Button with Side-Pop -->
-        <label class="task-row-item flex-col items-start gap-3 p-5 rounded-2xl cursor-pointer text-left block group">
+        <!-- Upload Files Button with Spring Side-Pop -->
+        <label class="glass-noir-row flex-col items-start gap-3 p-5 rounded-2xl cursor-pointer text-left block group">
           <input type="file" id="file-input" accept="image/*" multiple onchange="handleMultiplePhotoUpload(this)" class="hidden">
           <div class="flex items-center justify-between w-full">
             <div class="w-10 h-10 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white">
@@ -327,33 +379,47 @@
         </label>
       </div>
 
-      <!-- Live Camera Viewfinder Modal -->
-      <div id="camera-modal" class="hidden max-w-xl mx-auto glass-panel p-4 space-y-3">
-        <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+      <!-- Live Camera Viewfinder Modal with Multi-Camera Selector -->
+      <div id="camera-modal" class="hidden max-w-xl mx-auto glass-noir-panel p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-            <span class="text-xs font-mono font-bold text-white uppercase tracking-wider">Live Viewfinder</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-white uppercase tracking-wider">Live Camera Viewfinder</span>
           </div>
-          <button onclick="stopLiveCamera()" class="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition">
+          <button onclick="stopLiveCamera()" class="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
 
-        <div class="relative bg-black/80 rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-white/10">
-          <video id="camera-stream" autoplay playsinline class="w-full h-full object-cover"></video>
-          <!-- Alignment Frame -->
-          <div class="absolute inset-6 border border-white/30 rounded-lg pointer-events-none flex flex-col justify-between p-2">
-            <span class="text-[10px] font-mono text-neutral-300 bg-black/60 px-2 py-0.5 rounded w-max backdrop-blur-md">Position packaging within frame</span>
-            <span class="text-[10px] font-mono text-neutral-300 bg-black/60 px-2 py-0.5 rounded w-max self-end backdrop-blur-md">Ensure text is legible</span>
+        <!-- Camera Device Dropdown Selector -->
+        <div class="flex items-center gap-2.5 bg-black/40 p-2.5 rounded-xl border border-white/[0.08]">
+          <i data-lucide="video" class="w-4 h-4 text-neutral-400"></i>
+          <label class="text-xs text-neutral-300 font-medium whitespace-nowrap">Active Camera:</label>
+          <select id="camera-select" onchange="switchCameraDevice(this.value)" class="glass-noir-input py-1.5 text-xs text-white">
+            <option value="">Detecting cameras...</option>
+          </select>
+        </div>
+
+        <!-- Viewfinder Stream Box -->
+        <div class="relative bg-black/90 rounded-2xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-white/15">
+          <video id="camera-stream" autoplay playsinline muted class="w-full h-full object-cover"></video>
+          
+          <!-- Alignment Frame Guide -->
+          <div class="absolute inset-6 border border-white/30 rounded-xl pointer-events-none flex flex-col justify-between p-3">
+            <span class="text-[10px] font-mono text-neutral-200 bg-black/60 px-2 py-0.5 rounded w-max backdrop-blur-md">Frame statutory details inside box</span>
+            <span class="text-[10px] font-mono text-neutral-200 bg-black/60 px-2 py-0.5 rounded w-max self-end backdrop-blur-md">Ensure packaging is sharp</span>
           </div>
+
+          <!-- Flash Overlay -->
+          <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
         </div>
 
         <div class="flex items-center justify-between pt-1">
           <button onclick="stopLiveCamera()" class="btn-secondary">
-            Close Camera
+            Done / Close Cam
           </button>
           <button onclick="captureCameraSnapshot()" class="btn-primary">
-            <i data-lucide="camera" class="w-4 h-4"></i> Snap & Add to Tray
+            <i data-lucide="camera" class="w-4 h-4"></i> Snap Photo & Add to Tray
           </button>
         </div>
         <canvas id="snapshot-canvas" class="hidden"></canvas>
@@ -361,12 +427,12 @@
 
       <!-- Quick Demo Presets -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
-        <button onclick="useMultiPhotoPreset('clear')" class="task-row-item justify-between p-3.5 text-xs">
+        <button onclick="useMultiPhotoPreset('clear')" class="glass-noir-row justify-between p-3.5 text-xs">
           <span class="text-neutral-300 group-hover:text-white font-medium">Load Demo Biscuit Packet</span>
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition"></i>
         </button>
 
-        <button onclick="useMultiPhotoPreset('mixed')" class="task-row-item justify-between p-3.5 text-xs">
+        <button onclick="useMultiPhotoPreset('mixed')" class="glass-noir-row justify-between p-3.5 text-xs">
           <span class="text-neutral-300 group-hover:text-white font-medium">Load Mixed (Blurry Gate Test)</span>
           <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400"></i>
         </button>
@@ -398,7 +464,7 @@
     </div>
 
     <!-- ================= STEP 2: QUALITY CHECK ================= -->
-    <div id="card-step-2" class="hidden glass-panel p-6 sm:p-8 space-y-6">
+    <div id="card-step-2" class="hidden glass-noir-panel p-6 sm:p-8 space-y-6">
       <div class="text-center space-y-1.5">
         <h2 class="text-2xl font-bold text-white tracking-tight">OpenCV Quality Gate</h2>
         <p class="text-xs text-neutral-400 font-light">Verifying blur variance, resolution, and glare before statutory OCR analysis.</p>
@@ -417,7 +483,7 @@
     </div>
 
     <!-- ================= STEP 3: EXTRACTION ================= -->
-    <div id="card-step-3" class="hidden glass-panel p-6 sm:p-8 space-y-6">
+    <div id="card-step-3" class="hidden glass-noir-panel p-6 sm:p-8 space-y-6">
       <div class="text-center space-y-1.5">
         <h2 class="text-2xl font-bold text-white tracking-tight">Extracted Statutory Facts</h2>
         <p class="text-xs text-neutral-400 font-light">Structured declarations parsed across packaging angles with coordinate provenance.</p>
@@ -436,7 +502,7 @@
     </div>
 
     <!-- ================= STEP 4: COMPLIANCE DECISIONS ================= -->
-    <div id="card-step-4" class="hidden glass-panel p-6 sm:p-8 space-y-6">
+    <div id="card-step-4" class="hidden glass-noir-panel p-6 sm:p-8 space-y-6">
       <div class="text-center space-y-1.5">
         <h2 class="text-2xl font-bold text-white tracking-tight">Deterministic Legal Compliance</h2>
         <p class="text-xs text-neutral-400 font-light">Evaluated deterministically in Python against Legal Metrology Rules, 2011.</p>
@@ -455,7 +521,7 @@
     </div>
 
     <!-- ================= STEP 5: AUDIT REPORT ================= -->
-    <div id="card-step-5" class="hidden glass-panel p-6 space-y-6">
+    <div id="card-step-5" class="hidden glass-noir-panel p-6 space-y-6">
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
         <div>
           <h2 class="text-2xl font-bold text-white tracking-tight">Official Inspection Certificate</h2>
@@ -479,7 +545,7 @@
   </main>
 
   <!-- Glass Noir Footer -->
-  <footer class="border-t border-white/[0.08] bg-[#050505]/80 py-3.5 text-center text-xs text-neutral-500 font-mono">
+  <footer class="border-t border-white/[0.08] bg-[#050608]/80 py-3.5 text-center text-xs text-neutral-500 font-mono">
     INSIST • AI reads statutory observations. Deterministic code enforces compliance.
   </footer>
 
@@ -489,6 +555,7 @@
     let uploadedPhotos = [];
     let cachedData = null;
     let mediaStream = null;
+    let currentDeviceId = null;
 
     function goToStep(stepNum) {
       curStep = stepNum;
@@ -526,33 +593,68 @@
       return inspId;
     }
 
-    // ========== LIVE CAMERA API ==========
+    // ========== MULTI-CAMERA & LIVE STREAM ENGINE ==========
     async function startLiveCamera() {
       const modal = document.getElementById('camera-modal');
       modal.classList.remove('hidden');
 
       try {
-        const constraints = {
-          video: {
-            facingMode: 'environment',
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-          }
-        };
-        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        const video = document.getElementById('camera-stream');
-        video.srcObject = mediaStream;
+        await enumerateVideoDevices();
+        await openCameraStream(currentDeviceId);
       } catch (err) {
-        console.warn('Environment camera failed, trying default camera:', err);
-        try {
-          mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-          const video = document.getElementById('camera-stream');
-          video.srcObject = mediaStream;
-        } catch (e) {
-          alert('Could not access camera: ' + e.message + '. Please check camera permissions.');
-          stopLiveCamera();
-        }
+        console.warn('Camera initiation failed:', err);
+        alert('Could not access camera: ' + err.message + '. Please ensure camera permissions are granted.');
+        stopLiveCamera();
       }
+    }
+
+    async function enumerateVideoDevices() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        // Request initial permission to get device labels
+        const initialStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        initialStream.getTracks().forEach(t => t.stop());
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        const select = document.getElementById('camera-select');
+        select.innerHTML = '';
+
+        videoDevices.forEach((dev, idx) => {
+          const opt = document.createElement('option');
+          opt.value = dev.deviceId;
+          opt.text = dev.label || `Camera ${idx + 1} (${dev.deviceId.substring(0, 8)}...)`;
+          select.appendChild(opt);
+        });
+
+        if (videoDevices.length > 0) {
+          currentDeviceId = videoDevices[0].deviceId;
+          select.value = currentDeviceId;
+        }
+      } catch (e) {
+        console.warn('enumerateDevices error:', e);
+      }
+    }
+
+    async function openCameraStream(deviceId) {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+      }
+
+      const constraints = {
+        video: deviceId ? { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } } : { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      };
+
+      mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      const video = document.getElementById('camera-stream');
+      video.srcObject = mediaStream;
+      await video.play();
+    }
+
+    async function switchCameraDevice(deviceId) {
+      if (!deviceId) return;
+      currentDeviceId = deviceId;
+      await openCameraStream(deviceId);
     }
 
     function stopLiveCamera() {
@@ -566,12 +668,21 @@
     async function captureCameraSnapshot() {
       const video = document.getElementById('camera-stream');
       const canvas = document.getElementById('snapshot-canvas');
-      if (!video || !video.videoWidth) return;
+      const flash = document.getElementById('camera-flash');
+      
+      if (!video) return;
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      const w = video.videoWidth || 1280;
+      const h = video.videoHeight || 720;
+      canvas.width = w;
+      canvas.height = h;
+
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(video, 0, 0, w, h);
+
+      // Trigger Shutter Flash Effect
+      flash.className = 'absolute inset-0 bg-white camera-flash-active pointer-events-none';
+      setTimeout(() => { flash.className = 'absolute inset-0 bg-white opacity-0 pointer-events-none'; }, 350);
 
       canvas.toBlob(async (blob) => {
         if (!blob) return;
@@ -594,7 +705,7 @@
         });
 
         renderPhotoTray();
-      }, 'image/jpeg', 0.92);
+      }, 'image/jpeg', 0.95);
     }
 
     async function handleMultiplePhotoUpload(input) {
@@ -700,7 +811,7 @@
 
       uploadedPhotos.forEach((p, idx) => {
         const item = document.createElement('div');
-        item.className = 'task-row-item justify-between p-3.5';
+        item.className = 'glass-noir-row justify-between p-3.5';
         item.innerHTML = `
           <div class="flex items-center gap-3">
             <span class="w-5 h-5 rounded-full bg-white/10 text-white font-bold font-mono text-[10px] flex items-center justify-center">${idx + 1}</span>
@@ -784,7 +895,7 @@
       container.innerHTML = '';
       cachedData.facts.forEach(f => {
         const item = document.createElement('div');
-        item.className = 'task-row-item justify-between p-3.5';
+        item.className = 'glass-noir-row justify-between p-3.5';
         item.innerHTML = `
           <div>
             <div class="flex items-center gap-2">
@@ -810,7 +921,7 @@
                            'bg-amber-500/10 text-amber-400 border-amber-500/30';
 
         const card = document.createElement('div');
-        card.className = 'task-row-item justify-between p-4 items-start gap-4';
+        card.className = 'glass-noir-row justify-between p-4 items-start gap-4';
         card.innerHTML = `
           <div>
             <div class="flex items-center gap-2">
