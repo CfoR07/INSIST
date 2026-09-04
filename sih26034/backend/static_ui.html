@@ -13,34 +13,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       SECTOR82 Glass Noir (Frosted Dark Liquid Glass) Specification
+       SECTOR82 Glass Noir Specification with Custom Frosted Background
        ========================================================================== */
     :root {
       /* Surface & Optics */
       --glass-bg-canvas: #090a0f;
-      --glass-bg-shell: rgba(14, 16, 24, 0.42);
-      --glass-bg-card: rgba(18, 20, 30, 0.38);
-      --glass-bg-card-hover: rgba(255, 255, 255, 0.06);
-      --glass-bg-input: rgba(0, 0, 0, 0.35);
+      --glass-bg-shell: rgba(14, 16, 24, 0.45);
+      --glass-bg-card: rgba(18, 20, 30, 0.42);
+      --glass-bg-card-hover: rgba(255, 255, 255, 0.07);
+      --glass-bg-input: rgba(0, 0, 0, 0.38);
 
       /* Frost Blur Strengths */
       --glass-blur-shell: 40px;
-      --glass-blur-card: 32px;
-      --glass-blur-dock: 28px;
+      --glass-blur-card: 35px;
+      --glass-blur-dock: 30px;
 
       /* Glass Edge Chamfer & Inset Refractions */
-      --glass-border: rgba(255, 255, 255, 0.09);
-      --glass-border-hover: rgba(255, 255, 255, 0.22);
-      --glass-border-active: rgba(255, 255, 255, 0.36);
+      --glass-border: rgba(255, 255, 255, 0.10);
+      --glass-border-hover: rgba(255, 255, 255, 0.24);
+      --glass-border-active: rgba(255, 255, 255, 0.38);
 
       /* Refraction Shadows (Top Inset Highlight + Ambient Depth) */
       --glass-shadow-shell: 
-        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.20),
         inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.40),
         0 40px 100px rgba(0, 0, 0, 0.70);
 
       --glass-shadow-card: 
-        inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.14),
+        inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.16),
         inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25),
         0 20px 50px rgba(0, 0, 0, 0.40);
 
@@ -77,7 +77,7 @@
 
     body {
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--glass-bg-canvas);
+      background: url('/bg_noir.jpg') center/cover no-repeat fixed #08090d;
       color: var(--glass-text-primary);
       min-height: 100vh;
       overflow-x: hidden;
@@ -85,35 +85,17 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    .font-mono {
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Cosmic Starry Atmosphere Canvas (Image 4 Aesthetic) */
-    .cosmic-canvas {
+    /* Subtle Dark Tint Screen for Readability */
+    .bg-tint-overlay {
       position: fixed;
       inset: 0;
+      background: rgba(5, 6, 10, 0.65);
       pointer-events: none;
       z-index: 0;
-      background: radial-gradient(circle at 50% 0%, rgba(30, 36, 56, 0.35) 0%, transparent 65%),
-                  radial-gradient(circle at 10% 80%, rgba(20, 24, 40, 0.25) 0%, transparent 50%),
-                  #07080c;
     }
 
-    .star-layer {
-      position: absolute;
-      inset: 0;
-      background-image: 
-        radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 100px 150px, rgba(255,255,255,0.7), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 250px 80px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 450px 300px, rgba(255,255,255,0.5), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 600px 200px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 750px 450px, rgba(255,255,255,0.6), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 900px 120px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 1150px 380px, rgba(255,255,255,0.7), rgba(0,0,0,0));
-      background-size: 1200px 600px;
-      opacity: 0.65;
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* Glass Noir Master Panel / Window */
@@ -131,10 +113,10 @@
     }
 
     .glass-noir-panel:hover {
-      background: rgba(22, 26, 38, 0.46);
+      background: rgba(22, 26, 38, 0.50);
       border-color: var(--glass-border-hover);
       box-shadow: 
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.20),
         0 24px 60px rgba(0, 0, 0, 0.45);
     }
 
@@ -145,8 +127,8 @@
       width: 100%;
       padding: 14px 18px;
       border-radius: var(--glass-radius-inner);
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       color: var(--glass-text-primary);
       cursor: pointer;
       transform: translateZ(0);
@@ -177,12 +159,12 @@
       align-items: center;
       gap: 12px;
       padding: 14px 10px;
-      background: rgba(14, 16, 24, 0.45);
+      background: rgba(14, 16, 24, 0.50);
       backdrop-filter: blur(var(--glass-blur-dock));
       -webkit-backdrop-filter: blur(var(--glass-blur-dock));
       border: 1px solid var(--glass-border);
       box-shadow: 
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.18),
         0 16px 40px rgba(0, 0, 0, 0.5);
       border-radius: var(--glass-radius-pill);
     }
@@ -201,25 +183,26 @@
       transition: 
         color 0.16s var(--ease-spring),
         background 0.16s var(--ease-spring),
-        transform 0.16s var(--ease-spring);
+        transform 0.16s var(--ease-spring),
+        box-shadow 0.16s var(--ease-spring);
     }
 
     .glass-noir-dock-btn:hover {
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.10);
       transform: scale(1.08);
     }
 
     .glass-noir-dock-btn.active {
       color: #07080c;
       background: #ffffff;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
     }
 
     /* Stepper Badges (Glass Noir) */
     .step-active {
       border-color: rgba(255, 255, 255, 0.45);
-      background: rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.10);
       color: #ffffff;
       box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 20px rgba(255, 255, 255, 0.08);
     }
@@ -338,43 +321,36 @@
 </head>
 <body class="flex flex-col justify-between relative selection:bg-white selection:text-black">
 
-  <!-- Cosmic Starry Atmosphere Canvas -->
-  <div class="cosmic-canvas">
-    <div class="star-layer"></div>
-  </div>
+  <!-- Background Screen Overlay -->
+  <div class="bg-tint-overlay"></div>
 
   <div class="relative z-10 flex min-h-screen">
     
     <!-- Left Floating Capsule Dock (SECTOR82 / INSIST Navigation) -->
-    <aside class="hidden md:flex flex-col justify-between py-6 px-4 shrink-0">
+    <aside class="hidden md:flex flex-col justify-start gap-8 py-6 px-4 shrink-0">
       <!-- Top Logo Circle Button -->
       <div class="w-11 h-11 rounded-full border border-white/20 bg-white/[0.06] p-1.5 flex items-center justify-center shadow-lg shadow-black/80 backdrop-blur-xl">
-        <img src="/logo.png?v=4" alt="INSIST Logo" class="w-full h-full object-contain rounded-full" onerror="this.onerror=null; this.src='/insist.png'" />
+        <img src="/logo.png?v=5" alt="INSIST Logo" class="w-full h-full object-contain rounded-full" onerror="this.onerror=null; this.src='/insist.png'" />
       </div>
 
-      <!-- Center Nav Capsule Dock -->
-      <nav class="glass-noir-dock my-auto">
-        <button onclick="goToStep(1)" class="glass-noir-dock-btn active" title="Capture & Upload">
+      <!-- Center Nav Capsule Dock (Dynamically Synchronized with Steps) -->
+      <nav class="glass-noir-dock">
+        <button id="dock-btn-1" onclick="goToStep(1)" class="glass-noir-dock-btn active" title="Step 1: Capture & Upload">
           <i data-lucide="home" class="w-4 h-4"></i>
         </button>
-        <button onclick="goToStep(2)" class="glass-noir-dock-btn" title="Quality Gate">
+        <button id="dock-btn-2" onclick="goToStep(2)" class="glass-noir-dock-btn" title="Step 2: Quality Gate">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
         </button>
-        <button onclick="goToStep(3)" class="glass-noir-dock-btn" title="Statutory Extraction">
+        <button id="dock-btn-3" onclick="goToStep(3)" class="glass-noir-dock-btn" title="Step 3: Statutory Extraction">
           <i data-lucide="scan-text" class="w-4 h-4"></i>
         </button>
-        <button onclick="goToStep(4)" class="glass-noir-dock-btn" title="LMPC Rules Compliance">
+        <button id="dock-btn-4" onclick="goToStep(4)" class="glass-noir-dock-btn" title="Step 4: LMPC Rules Compliance">
           <i data-lucide="scale" class="w-4 h-4"></i>
         </button>
-        <button onclick="goToStep(5)" class="glass-noir-dock-btn" title="Inspection Certificate">
+        <button id="dock-btn-5" onclick="goToStep(5)" class="glass-noir-dock-btn" title="Step 5: Inspection Certificate">
           <i data-lucide="file-check-2" class="w-4 h-4"></i>
         </button>
       </nav>
-
-      <!-- Bottom Settings/Help -->
-      <div class="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center text-neutral-400 hover:text-white transition cursor-pointer backdrop-blur-md">
-        <i data-lucide="sparkles" class="w-4 h-4"></i>
-      </div>
     </aside>
 
     <!-- Main Content Area -->
@@ -384,7 +360,7 @@
       <header class="flex items-center justify-between pb-4 border-b border-white/[0.08]">
         <div>
           <div class="flex items-center gap-2 text-xs font-mono text-neutral-400">
-            <span class="text-neutral-500 uppercase tracking-wider">SECTOR82</span>
+            <span class="text-neutral-400 uppercase tracking-wider">SECTOR82</span>
             <span>/</span>
             <span class="text-white font-semibold uppercase tracking-wider">LEGAL METROLOGY INSPECTION</span>
           </div>
@@ -632,7 +608,7 @@
       </main>
 
       <!-- Glass Noir Footer -->
-      <footer class="border-t border-white/[0.08] pt-3 text-center text-xs text-neutral-500 font-mono">
+      <footer class="border-t border-white/[0.08] pt-3 text-center text-xs text-neutral-400 font-mono">
         INSIST • AI reads statutory observations. Deterministic code enforces compliance.
       </footer>
 
@@ -649,6 +625,8 @@
 
     function goToStep(stepNum) {
       curStep = stepNum;
+      
+      // Update Step Cards & Top Stepper Badges
       for (let i = 1; i <= 5; i++) {
         document.getElementById('card-step-' + i).classList.add('hidden');
         const b = document.getElementById('badge-step-' + i);
@@ -659,7 +637,18 @@
         } else {
           b.className = 'py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold';
         }
+
+        // Update Left Floating Capsule Dock Active Highlight
+        const dockBtn = document.getElementById('dock-btn-' + i);
+        if (dockBtn) {
+          if (i === stepNum) {
+            dockBtn.className = 'glass-noir-dock-btn active';
+          } else {
+            dockBtn.className = 'glass-noir-dock-btn';
+          }
+        }
       }
+
       document.getElementById('card-step-' + stepNum).classList.remove('hidden');
 
       if (stepNum === 2) renderQualityStep();
@@ -689,7 +678,6 @@
       modal.classList.remove('hidden');
 
       try {
-        // Direct stream request prompts permission immediately
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 1920 }, height: { ideal: 1080 } }
         });
