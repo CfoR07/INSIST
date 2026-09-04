@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>INSIST — Legal Metrology Inspection Assistant</title>
+  <title>INSIST</title>
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="shortcut icon" type="image/png" href="/logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,50 +12,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ==========================================================================
-       SECTOR82 Glass Noir Specification with Custom Frosted Background
-       ========================================================================== */
     :root {
-      /* Surface & Optics */
       --glass-bg-canvas: #090a0f;
-      --glass-bg-shell: rgba(14, 16, 24, 0.45);
-      --glass-bg-card: rgba(18, 20, 30, 0.42);
+      --glass-bg-card: rgba(18, 20, 30, 0.45);
       --glass-bg-card-hover: rgba(255, 255, 255, 0.07);
       --glass-bg-input: rgba(0, 0, 0, 0.38);
 
-      /* Frost Blur Strengths */
-      --glass-blur-shell: 40px;
       --glass-blur-card: 35px;
       --glass-blur-dock: 30px;
 
-      /* Glass Edge Chamfer & Inset Refractions */
       --glass-border: rgba(255, 255, 255, 0.10);
       --glass-border-hover: rgba(255, 255, 255, 0.24);
       --glass-border-active: rgba(255, 255, 255, 0.38);
-
-      /* Refraction Shadows (Top Inset Highlight + Ambient Depth) */
-      --glass-shadow-shell: 
-        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.20),
-        inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.40),
-        0 40px 100px rgba(0, 0, 0, 0.70);
 
       --glass-shadow-card: 
         inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.16),
         inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25),
         0 20px 50px rgba(0, 0, 0, 0.40);
 
-      /* Typography Colors */
       --glass-text-primary: #ffffff;
       --glass-text-secondary: rgba(255, 255, 255, 0.76);
       --glass-text-muted: rgba(255, 255, 255, 0.48);
 
-      /* Curvature */
       --glass-radius-shell: 24px;
-      --glass-radius-card: 18px;
       --glass-radius-inner: 12px;
       --glass-radius-pill: 9999px;
 
-      /* Spring Physics */
       --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
       --transition-fast: 0.16s var(--ease-spring);
       --transition-smooth: 0.24s var(--ease-spring);
@@ -85,7 +67,6 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Subtle Dark Tint Screen for Readability */
     .bg-tint-overlay {
       position: fixed;
       inset: 0;
@@ -98,7 +79,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Glass Noir Master Panel / Window */
     .glass-noir-panel {
       background: var(--glass-bg-card);
       backdrop-filter: blur(var(--glass-blur-card)) saturate(140%);
@@ -120,7 +100,6 @@
         0 24px 60px rgba(0, 0, 0, 0.45);
     }
 
-    /* Interactive Row with Spring Side-Pop */
     .glass-noir-row {
       display: flex;
       align-items: center;
@@ -152,7 +131,6 @@
       transition-duration: 0.06s;
     }
 
-    /* Floating Capsule Dock (Sidebar Navigation) */
     .glass-noir-dock {
       display: flex;
       flex-direction: column;
@@ -199,7 +177,6 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
     }
 
-    /* Stepper Badges (Glass Noir) */
     .step-active {
       border-color: rgba(255, 255, 255, 0.45);
       background: rgba(255, 255, 255, 0.10);
@@ -219,7 +196,6 @@
       color: var(--glass-text-muted);
     }
 
-    /* High Contrast White Solid Button */
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -249,7 +225,6 @@
       transform: scale(0.96);
     }
 
-    /* Translucent Ghost Glass Secondary Button */
     .btn-secondary {
       display: inline-flex;
       align-items: center;
@@ -278,7 +253,6 @@
       transform: scale(0.96);
     }
 
-    /* Inset Glass Inputs */
     .glass-noir-input {
       color-scheme: dark;
       width: 100%;
@@ -309,7 +283,6 @@
       color: #ffffff;
     }
 
-    /* Camera Flash Animation */
     @keyframes camera-flash {
       0% { opacity: 0.9; }
       100% { opacity: 0; }
@@ -321,63 +294,65 @@
 </head>
 <body class="flex flex-col justify-between relative selection:bg-white selection:text-black">
 
-  <!-- Background Screen Overlay -->
   <div class="bg-tint-overlay"></div>
 
   <div class="relative z-10 flex min-h-screen">
     
-    <!-- Left Floating Capsule Dock (SECTOR82 / INSIST Navigation) -->
-    <aside class="hidden md:flex flex-col justify-start gap-8 py-6 px-4 shrink-0">
+    <!-- Left Floating Capsule Dock -->
+    <aside class="hidden md:flex flex-col justify-start gap-6 py-6 px-4 shrink-0">
       <!-- Top Logo Circle Button -->
-      <div class="w-11 h-11 rounded-full border border-white/20 bg-white/[0.06] p-1.5 flex items-center justify-center shadow-lg shadow-black/80 backdrop-blur-xl">
-        <img src="/logo.png?v=5" alt="INSIST Logo" class="w-full h-full object-contain rounded-full" onerror="this.onerror=null; this.src='/insist.png'" />
-      </div>
+      <button onclick="showInspectionView()" class="w-11 h-11 rounded-full border border-white/20 bg-white/[0.06] p-1.5 flex items-center justify-center shadow-lg shadow-black/80 backdrop-blur-xl hover:scale-105 transition cursor-pointer" title="INSIST Home">
+        <img src="/logo.png?v=6" alt="INSIST Logo" class="w-full h-full object-contain rounded-full" onerror="this.onerror=null; this.src='/insist.png'" />
+      </button>
 
-      <!-- Center Nav Capsule Dock (Dynamically Synchronized with Steps) -->
+      <!-- Center Nav Capsule Dock -->
       <nav class="glass-noir-dock">
-        <button id="dock-btn-1" onclick="goToStep(1)" class="glass-noir-dock-btn active" title="Step 1: Capture & Upload">
-          <i data-lucide="home" class="w-4 h-4"></i>
+        <button id="dock-btn-1" onclick="showInspectionView(); goToStep(1)" class="glass-noir-dock-btn active" title="Step 1: Capture">
+          <i data-lucide="camera" class="w-4 h-4"></i>
         </button>
-        <button id="dock-btn-2" onclick="goToStep(2)" class="glass-noir-dock-btn" title="Step 2: Quality Gate">
+        <button id="dock-btn-2" onclick="showInspectionView(); goToStep(2)" class="glass-noir-dock-btn" title="Step 2: Quality Gate">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
         </button>
-        <button id="dock-btn-3" onclick="goToStep(3)" class="glass-noir-dock-btn" title="Step 3: Statutory Extraction">
+        <button id="dock-btn-3" onclick="showInspectionView(); goToStep(3)" class="glass-noir-dock-btn" title="Step 3: Extraction">
           <i data-lucide="scan-text" class="w-4 h-4"></i>
         </button>
-        <button id="dock-btn-4" onclick="goToStep(4)" class="glass-noir-dock-btn" title="Step 4: LMPC Rules Compliance">
+        <button id="dock-btn-4" onclick="showInspectionView(); goToStep(4)" class="glass-noir-dock-btn" title="Step 4: Compliance">
           <i data-lucide="scale" class="w-4 h-4"></i>
         </button>
-        <button id="dock-btn-5" onclick="goToStep(5)" class="glass-noir-dock-btn" title="Step 5: Inspection Certificate">
+        <button id="dock-btn-5" onclick="showInspectionView(); goToStep(5)" class="glass-noir-dock-btn" title="Step 5: Certificate">
           <i data-lucide="file-check-2" class="w-4 h-4"></i>
         </button>
       </nav>
+
+      <!-- About SIH Mission Button -->
+      <button id="dock-btn-about" onclick="showAboutView()" class="glass-noir-dock-btn" title="About INSIST & SIH Mission">
+        <i data-lucide="info" class="w-4 h-4"></i>
+      </button>
     </aside>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col justify-between p-4 sm:p-6 max-w-5xl w-full mx-auto">
+    <div class="flex-1 flex flex-col justify-start p-4 sm:p-6 max-w-5xl w-full mx-auto">
       
-      <!-- Top Translucent Header -->
+      <!-- Clean Top Header: ONLY INSIST -->
       <header class="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-        <div>
-          <div class="flex items-center gap-2 text-xs font-mono text-neutral-400">
-            <span class="text-neutral-400 uppercase tracking-wider">SECTOR82</span>
-            <span>/</span>
-            <span class="text-white font-semibold uppercase tracking-wider">LEGAL METROLOGY INSPECTION</span>
-          </div>
-          <div class="flex items-center gap-2 mt-1">
-            <h1 class="text-lg font-bold text-white tracking-tight">INSIST Inspection Assistant</h1>
-            <span class="text-[9px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-full border border-white/10 bg-white/5 text-neutral-300 font-semibold">v2.4 NOIR</span>
-          </div>
+        <div class="flex items-center gap-3">
+          <button onclick="showInspectionView()" class="flex items-center gap-2.5 group cursor-pointer">
+            <h1 class="text-xl font-extrabold text-white tracking-tight font-mono">INSIST</h1>
+          </button>
         </div>
 
-        <div class="text-xs font-mono text-neutral-300 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/[0.08] flex items-center gap-2 backdrop-blur-md">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="font-medium">AI reads. Code decides.</span>
+        <div class="flex items-center gap-2">
+          <button onclick="showInspectionView()" id="nav-tab-inspect" class="px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/20 bg-white/10 text-white transition">
+            Inspection
+          </button>
+          <button onclick="showAboutView()" id="nav-tab-about" class="px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:text-white transition">
+            About & SIH Mission
+          </button>
         </div>
       </header>
 
-      <!-- Step-by-Step Main Container -->
-      <main class="my-6 space-y-6">
+      <!-- ================= INSPECTION VIEW ================= -->
+      <div id="view-inspection" class="space-y-6 my-6">
         
         <!-- Progress Stepper -->
         <div class="grid grid-cols-5 gap-2 text-center text-xs">
@@ -410,9 +385,8 @@
             <p class="text-xs text-neutral-400 font-light">Use your camera directly or upload multi-angle photos of the commodity packaging.</p>
           </div>
 
-          <!-- Action Choice: Camera vs File Upload -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
-            <!-- Live Camera Button with Spring Side-Pop -->
+            <!-- Live Camera Button -->
             <button onclick="startLiveCamera()" class="glass-noir-row flex-col items-start gap-3 p-5 rounded-2xl group cursor-pointer text-left">
               <div class="flex items-center justify-between w-full">
                 <div class="w-10 h-10 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white">
@@ -426,7 +400,7 @@
               </div>
             </button>
 
-            <!-- Upload Files Button with Spring Side-Pop -->
+            <!-- Upload Files Button -->
             <label class="glass-noir-row flex-col items-start gap-3 p-5 rounded-2xl cursor-pointer text-left block group">
               <input type="file" id="file-input" accept="image/*" multiple onchange="handleMultiplePhotoUpload(this)" class="hidden">
               <div class="flex items-center justify-between w-full">
@@ -442,7 +416,7 @@
             </label>
           </div>
 
-          <!-- Live Camera Viewfinder Modal with Multi-Camera Selector -->
+          <!-- Live Camera Viewfinder Modal -->
           <div id="camera-modal" class="hidden max-w-xl mx-auto glass-noir-panel p-5 space-y-4">
             <div class="flex items-center justify-between border-b border-white/10 pb-3">
               <div class="flex items-center gap-2">
@@ -454,7 +428,7 @@
               </button>
             </div>
 
-            <!-- Camera Device Dropdown Selector -->
+            <!-- Camera Device Selector Dropdown -->
             <div class="flex items-center gap-2.5 bg-black/40 p-2.5 rounded-xl border border-white/[0.08]">
               <i data-lucide="video" class="w-4 h-4 text-neutral-400"></i>
               <label class="text-xs text-neutral-300 font-medium whitespace-nowrap">Active Camera:</label>
@@ -467,13 +441,11 @@
             <div class="relative bg-black/90 rounded-2xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-white/15">
               <video id="camera-stream" autoplay playsinline muted class="w-full h-full object-cover"></video>
               
-              <!-- Alignment Frame Guide -->
               <div class="absolute inset-6 border border-white/30 rounded-xl pointer-events-none flex flex-col justify-between p-3">
                 <span class="text-[10px] font-mono text-neutral-200 bg-black/60 px-2 py-0.5 rounded w-max backdrop-blur-md">Frame statutory details inside box</span>
                 <span class="text-[10px] font-mono text-neutral-200 bg-black/60 px-2 py-0.5 rounded w-max self-end backdrop-blur-md">Ensure packaging is sharp</span>
               </div>
 
-              <!-- Flash Overlay -->
               <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
             </div>
 
@@ -517,7 +489,6 @@
               </div>
             </div>
 
-            <!-- Proceed Button -->
             <div id="btn-proceed-photos-bar" class="hidden pt-3 border-t border-white/[0.08] flex justify-end">
               <button onclick="goToStep(2)" class="btn-primary">
                 Proceed with <span id="btn-photo-count-txt">0</span> Photos <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -605,12 +576,88 @@
           </div>
         </div>
 
-      </main>
+      </div>
 
-      <!-- Glass Noir Footer -->
-      <footer class="border-t border-white/[0.08] pt-3 text-center text-xs text-neutral-400 font-mono">
-        INSIST • AI reads statutory observations. Deterministic code enforces compliance.
-      </footer>
+      <!-- ================= ABOUT & SIH MISSION VIEW ================= -->
+      <div id="view-about" class="hidden space-y-6 my-6">
+        
+        <!-- Mission Header Card -->
+        <div class="glass-noir-panel p-6 sm:p-8 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl border border-white/20 bg-white/[0.08] p-2 flex items-center justify-center">
+              <img src="/logo.png?v=6" alt="INSIST Logo" class="w-full h-full object-contain rounded-xl" onerror="this.onerror=null; this.src='/insist.png'" />
+            </div>
+            <div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight font-mono">INSIST</h2>
+              <p class="text-xs text-neutral-400">Automated Pre-Packed Commodity Compliance & Verification Assistant</p>
+            </div>
+          </div>
+          <p class="text-sm text-neutral-300 leading-relaxed font-light">
+            Developed for <strong class="text-white">Smart India Hackathon (SIH26034)</strong>, INSIST bridges the gap between field enforcement officers and complex statutory laws under the <strong class="text-white">Legal Metrology (Packaged Commodities) Rules, 2011</strong>.
+          </p>
+        </div>
+
+        <!-- Problem vs Solution Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- What We Are Solving -->
+          <div class="glass-noir-panel p-6 space-y-3">
+            <div class="flex items-center gap-2 text-rose-400 font-bold text-sm font-mono">
+              <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+              The Problem We Are Solving
+            </div>
+            <ul class="text-xs text-neutral-300 space-y-2 font-light list-disc list-inside">
+              <li><strong class="text-neutral-200">Manual Inspection Bottleneck:</strong> Field officers manually review dozens of tiny statutory declarations per package, creating massive delays.</li>
+              <li><strong class="text-neutral-200">Missed Statutory Violations:</strong> Missing Unit Sale Price (USP), ambiguous MRP without tax declarations, or incorrect font sizes are frequently overlooked.</li>
+              <li><strong class="text-neutral-200">Lack of Verifiable Provenance:</strong> Traditional paper audits lack tamper-evident timestamping and photographic coordinate evidence.</li>
+            </ul>
+          </div>
+
+          <!-- The SIH Bridge Solution -->
+          <div class="glass-noir-panel p-6 space-y-3">
+            <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm font-mono">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              The INSIST Solution & Bridge
+            </div>
+            <ul class="text-xs text-neutral-300 space-y-2 font-light list-disc list-inside">
+              <li><strong class="text-neutral-200">AI Reads, Code Decides:</strong> Multi-pass native OCR extracts raw text without LLM hallucinations. Pure deterministic code enforces Rule 6 & Rule 9 compliance.</li>
+              <li><strong class="text-neutral-200">OpenCV Quality Gate:</strong> Laplacian variance checks guarantee packaging photos are sharp and glare-free before legal evaluation.</li>
+              <li><strong class="text-neutral-200">Instant Tamper-Evident Certificates:</strong> Digitally signed inspection reports with SHA-256 integrity hashes and one-click PDF export.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Architecture Pillars -->
+        <div class="glass-noir-panel p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Core System Architecture</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+              <span class="text-neutral-400 font-mono text-[10px] uppercase block">Layer 01</span>
+              <strong class="text-white block font-semibold">Live Multi-Angle Capture</strong>
+              <span class="text-neutral-400 font-light block">Webcam, mobile lens, or high-res photo tray with OpenCV quality filtering.</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+              <span class="text-neutral-400 font-mono text-[10px] uppercase block">Layer 02</span>
+              <strong class="text-white block font-semibold">Multi-Pass OCR Engine</strong>
+              <span class="text-neutral-400 font-light block">Multi-angle sweeps, CLAHE normalization, and contour-based Veg/Non-Veg logo detection.</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+              <span class="text-neutral-400 font-mono text-[10px] uppercase block">Layer 03</span>
+              <strong class="text-white block font-semibold">Deterministic Rule Matrix</strong>
+              <span class="text-neutral-400 font-light block">Auditable, non-hallucinatory evaluation against versioned LMPC 2011 statutory rules.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back to Inspection CTA -->
+        <div class="flex justify-center pt-2">
+          <button onclick="showInspectionView()" class="btn-primary">
+            Launch Commodity Inspection <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
 
     </div>
   </div>
@@ -623,10 +670,35 @@
     let mediaStream = null;
     let currentDeviceId = null;
 
+    function showInspectionView() {
+      document.getElementById('view-inspection').classList.remove('hidden');
+      document.getElementById('view-about').classList.add('hidden');
+      
+      document.getElementById('nav-tab-inspect').className = 'px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/20 bg-white/10 text-white transition';
+      document.getElementById('nav-tab-about').className = 'px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:text-white transition';
+      
+      document.getElementById('dock-btn-about').className = 'glass-noir-dock-btn';
+      goToStep(curStep);
+    }
+
+    function showAboutView() {
+      document.getElementById('view-inspection').classList.add('hidden');
+      document.getElementById('view-about').classList.remove('hidden');
+
+      document.getElementById('nav-tab-inspect').className = 'px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:text-white transition';
+      document.getElementById('nav-tab-about').className = 'px-3.5 py-1.5 rounded-xl text-xs font-medium border border-white/20 bg-white/10 text-white transition';
+
+      for (let i = 1; i <= 5; i++) {
+        const dockBtn = document.getElementById('dock-btn-' + i);
+        if (dockBtn) dockBtn.className = 'glass-noir-dock-btn';
+      }
+      document.getElementById('dock-btn-about').className = 'glass-noir-dock-btn active';
+      lucide.createIcons();
+    }
+
     function goToStep(stepNum) {
       curStep = stepNum;
       
-      // Update Step Cards & Top Stepper Badges
       for (let i = 1; i <= 5; i++) {
         document.getElementById('card-step-' + i).classList.add('hidden');
         const b = document.getElementById('badge-step-' + i);
@@ -638,7 +710,6 @@
           b.className = 'py-3 px-1 rounded-2xl border step-idle transition-all flex flex-col items-center gap-1 font-semibold';
         }
 
-        // Update Left Floating Capsule Dock Active Highlight
         const dockBtn = document.getElementById('dock-btn-' + i);
         if (dockBtn) {
           if (i === stepNum) {
@@ -687,7 +758,6 @@
         video.srcObject = stream;
         await video.play();
 
-        // Populate camera selector dynamically
         if (navigator.mediaDevices.enumerateDevices) {
           const devices = await navigator.mediaDevices.enumerateDevices();
           const videoDevices = devices.filter(d => d.kind === 'videoinput');
@@ -759,7 +829,6 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, w, h);
 
-      // Flash feedback
       flash.className = 'absolute inset-0 bg-white camera-flash-active pointer-events-none';
       setTimeout(() => { flash.className = 'absolute inset-0 bg-white opacity-0 pointer-events-none'; }, 350);
 
