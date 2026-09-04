@@ -759,6 +759,10 @@
           else dockBtn.className = 'glass-noir-dock-btn';
         }
       }
+      if (step === 5 && inspId) {
+        const frame = document.getElementById('report-frame');
+        if (frame) frame.src = `/api/inspections/${inspId}/report`;
+      }
       document.getElementById('dock-btn-about').className = 'glass-noir-dock-btn';
       lucide.createIcons();
     }
@@ -898,28 +902,61 @@
 
     async function useMultiPhotoPreset(type) {
       await initInspection();
-      const mockImages = type === 'clear' 
-        ? [
-            { name: 'Kelloggs_Front_Panel.jpg', score: 98, status: 'PASS', blur: 420.5 },
-            { name: 'Kelloggs_Side_Statutory.jpg', score: 95, status: 'PASS', blur: 380.2 }
-          ]
-        : [
-            { name: 'Crisp_Primary_Angle.jpg', score: 96, status: 'PASS', blur: 410.0 },
-            { name: 'Blurry_Reflected_Angle.jpg', score: 48, status: 'BLURRY', blur: 42.1 }
-          ];
-
-      uploadedPhotos = mockImages.map((m, idx) => ({
-        id: `mock-img-${idx + 1}`,
-        url: '/uploads/sample.jpg',
-        view_type: m.name,
-        quality: {
-          quality_status: m.status,
-          quality_score: m.score,
-          blur_metric: m.blur,
-          brightness_metric: 140.2
-        }
-      }));
-
+      if (type === 'clear') {
+        uploadedPhotos = [
+          {
+            id: `demo-img-1`,
+            url: '/uploads/sample_front_clear.jpg',
+            view_type: 'Kelloggs_Front_Panel.jpg',
+            quality: {
+              quality_status: 'PASS',
+              quality_score: 98,
+              blur_metric: 420.5,
+              brightness_metric: 140.2,
+              usable: true
+            }
+          },
+          {
+            id: `demo-img-2`,
+            url: '/uploads/sample_back_clear.jpg',
+            view_type: 'Kelloggs_Side_Statutory.jpg',
+            quality: {
+              quality_status: 'PASS',
+              quality_score: 95,
+              blur_metric: 380.2,
+              brightness_metric: 138.5,
+              usable: true
+            }
+          }
+        ];
+      } else {
+        uploadedPhotos = [
+          {
+            id: `demo-img-1`,
+            url: '/uploads/sample_front_clear.jpg',
+            view_type: 'Crisp_Primary_Angle.jpg',
+            quality: {
+              quality_status: 'PASS',
+              quality_score: 96,
+              blur_metric: 410.0,
+              brightness_metric: 142.0,
+              usable: true
+            }
+          },
+          {
+            id: `demo-img-blur`,
+            url: '/uploads/sample_blur.jpg',
+            view_type: 'Blurry_Reflected_Angle.jpg',
+            quality: {
+              quality_status: 'BLURRY',
+              quality_score: 48,
+              blur_metric: 42.1,
+              brightness_metric: 110.0,
+              usable: false
+            }
+          }
+        ];
+      }
       renderPhotoTray();
     }
 
