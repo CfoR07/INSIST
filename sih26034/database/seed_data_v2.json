@@ -1,0 +1,349 @@
+{
+  "categories": [
+    {
+      "id": "CAT-ALL",
+      "name": "All Pre-Packed Commodities",
+      "parent_id": null,
+      "description": "General statutory rules applying to all pre-packaged goods under LMPC 2011"
+    },
+    {
+      "id": "CAT-FOOD",
+      "name": "Food & Beverages",
+      "parent_id": "CAT-ALL",
+      "description": "Edible packaged food items, confectionery, dairy, grains, snacks"
+    },
+    {
+      "id": "CAT-PHARMA",
+      "name": "Pharmaceuticals & Drugs",
+      "parent_id": "CAT-ALL",
+      "description": "Medicines, formulations, medical devices subject to Drug Price Control"
+    },
+    {
+      "id": "CAT-COSMETICS",
+      "name": "Cosmetics & Personal Care",
+      "parent_id": "CAT-ALL",
+      "description": "Soaps, shampoos, skincare, lotions, cosmetics"
+    },
+    {
+      "id": "CAT-ELECTRONICS",
+      "name": "Electronics & Electrical Appliances",
+      "parent_id": "CAT-ALL",
+      "description": "Cables, chargers, appliances, electronic gadgets"
+    },
+    {
+      "id": "CAT-COMMODITY",
+      "name": "General Commodity",
+      "parent_id": "CAT-ALL",
+      "description": "Non-food household commodities and stationery"
+    }
+  ],
+  "regulatory_documents": [
+    {
+      "id": "DOC-LMPC-2011",
+      "authority": "Ministry of Consumer Affairs, Food and Public Distribution",
+      "title": "Legal Metrology (Packaged Commodities) Rules, 2011",
+      "notification_number": "G.S.R. 202(E)",
+      "publication_date": "2011-03-07",
+      "effective_date": "2011-04-01",
+      "source_url": "https://consumeraffairs.nic.in/acts-and-rules/legal-metrology/the-legal-metrology-packaged-commodities-rules-2011",
+      "document_hash": "sha256_lmpc_2011_gazette_official",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "DOC-LMPC-AMEND-2021",
+      "authority": "Department of Consumer Affairs",
+      "title": "Legal Metrology (Packaged Commodities) Amendment Rules, 2021 (Unit Sale Price Mandate)",
+      "notification_number": "G.S.R. 779(E)",
+      "publication_date": "2021-11-02",
+      "effective_date": "2022-12-01",
+      "source_url": "https://consumeraffairs.nic.in/sites/default/files/GSR779.pdf",
+      "document_hash": "sha256_gsr779_usp_mandate_official",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "DOC-FSSAI-LABELLING-2020",
+      "authority": "Food Safety and Standards Authority of India (FSSAI)",
+      "title": "Food Safety and Standards (Labelling and Display) Regulations, 2020",
+      "notification_number": "F. No. 1-94/FSSAI/SP(L&C)/2017",
+      "publication_date": "2020-11-17",
+      "effective_date": "2022-01-01",
+      "source_url": "https://www.fssai.gov.in/upload/uploadfiles/files/Gazette_Notification_Labelling_Display_18_11_2020.pdf",
+      "document_hash": "sha256_fssai_labelling_2020_official",
+      "verification_status": "VERIFIED"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE-MRP-PRESENCE",
+      "rule_code": "LMPC-001",
+      "category_id": "CAT-ALL",
+      "field": "mrp",
+      "requirement": "Mandatory Maximum Retail Price (MRP) Declaration",
+      "description": "Every package shall bear the retail sale price of the package in standard INR format",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "RULE-MRP-TAX-FORMAT",
+      "rule_code": "LMPC-002",
+      "category_id": "CAT-ALL",
+      "field": "mrp",
+      "requirement": "MRP Tax Inclusivity Declaration Format",
+      "description": "MRP must clearly declare inclusive of all taxes",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-NET-QTY-METRIC",
+      "rule_code": "LMPC-003",
+      "category_id": "CAT-ALL",
+      "field": "net_quantity",
+      "requirement": "Net Quantity Declaration in Standard Metric Units",
+      "description": "Net quantity shall be declared in standard metric units (g, kg, ml, l, or number)",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "RULE-USP-DECLARATION",
+      "rule_code": "LMPC-004",
+      "category_id": "CAT-ALL",
+      "field": "unit_sale_price",
+      "requirement": "Unit Sale Price (USP) Declaration",
+      "description": "Mandatory for all retail packages to declare unit sale price per g/kg/ml/litre/number",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-MFG-DATE",
+      "rule_code": "LMPC-005",
+      "category_id": "CAT-ALL",
+      "field": "mfg_date",
+      "requirement": "Month and Year of Manufacture / Pre-Packing",
+      "description": "The month and year in which the commodity is manufactured or pre-packed must be declared",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-EXPIRY-FOOD",
+      "rule_code": "LMPC-006",
+      "category_id": "CAT-FOOD",
+      "field": "expiry_date",
+      "requirement": "Best Before / Expiry Date Declaration for Food Commodities",
+      "description": "Perishable food packages must declare Best Before or Expiry Date",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "RULE-MFG-NAME-ADDR",
+      "rule_code": "LMPC-007",
+      "category_id": "CAT-ALL",
+      "field": "manufacturer",
+      "requirement": "Name and Complete Address of Manufacturer / Packer / Importer",
+      "description": "Name and complete address of the manufacturer or packer or importer must be stated",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-CONSUMER-CARE",
+      "rule_code": "LMPC-008",
+      "category_id": "CAT-ALL",
+      "field": "consumer_care",
+      "requirement": "Consumer Care Details (Name, Phone, Address, Email)",
+      "description": "Consumer care details with postal address, telephone number, or email address must be prominent",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-VEG-LOGO-FOOD",
+      "rule_code": "LMPC-009",
+      "category_id": "CAT-FOOD",
+      "field": "veg_nonveg",
+      "requirement": "Vegetarian / Non-Vegetarian Logo Declaration",
+      "description": "Green dot in square for Vegetarian or Brown triangle for Non-Vegetarian food packaging",
+      "severity": "ERROR"
+    },
+    {
+      "id": "RULE-COUNTRY-ORIGIN",
+      "rule_code": "LMPC-010",
+      "category_id": "CAT-ALL",
+      "field": "country_of_origin",
+      "requirement": "Country of Origin for Imported Pre-Packed Commodities",
+      "description": "For imported pre-packed products, name of the Country of Origin must be explicitly declared",
+      "severity": "ERROR"
+    }
+  ],
+  "rule_versions": [
+    {
+      "id": "RV-LMPC-001-v1",
+      "rule_id": "RULE-MRP-PRESENCE",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(e) \u2014 Legal Metrology (Packaged Commodities) Rules, 2011",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": null,
+      "expected_unit": "INR",
+      "min_value": 0.01,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-002-v1",
+      "rule_id": "RULE-MRP-TAX-FORMAT",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(e) Expl. (iii) \u2014 Inclusive of all taxes clause",
+      "validation_type": "format",
+      "operator": "regex_match",
+      "expected_value": "(incl|inclusive).*tax|m\\.?r\\.?p",
+      "expected_unit": null,
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-003-v1",
+      "rule_id": "RULE-NET-QTY-METRIC",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(f) and Rule 12 \u2014 Standard Units of Weight and Measure",
+      "validation_type": "unit_check",
+      "operator": "in_list",
+      "expected_value": "g,kg,ml,l,m,cm,mm,n,units,pcs,gm",
+      "expected_unit": "standard_metric",
+      "min_value": 0.001,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-004-v1",
+      "rule_id": "RULE-USP-DECLARATION",
+      "version_label": "2022-v2",
+      "doc_id": "DOC-LMPC-AMEND-2021",
+      "statutory_reference": "Rule 6(11) as amended by G.S.R. 779(E)",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": null,
+      "expected_unit": "INR/unit",
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": "{\"exempt_if\": [\"net_quantity_eq_1kg\", \"net_quantity_eq_1l\", \"net_quantity_eq_1m\"]}",
+      "effective_from": "2022-12-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-005-v1",
+      "rule_id": "RULE-MFG-DATE",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(d) \u2014 Month and Year of Manufacture",
+      "validation_type": "date_presence",
+      "operator": "is_valid_date",
+      "expected_value": null,
+      "expected_unit": "MM/YYYY",
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-006-v1",
+      "rule_id": "RULE-EXPIRY-FOOD",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(d) Proviso and FSSAI Labelling Regulation 2.2.2",
+      "validation_type": "date_presence",
+      "operator": "is_valid_date",
+      "expected_value": null,
+      "expected_unit": "Date",
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-007-v1",
+      "rule_id": "RULE-MFG-NAME-ADDR",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(a) and Rule 6(1)(b) \u2014 Manufacturer Address",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": null,
+      "expected_unit": null,
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-008-v1",
+      "rule_id": "RULE-CONSUMER-CARE",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(a) and Rule 6(2) \u2014 Consumer Care Contact Details",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": null,
+      "expected_unit": null,
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-009-v1",
+      "rule_id": "RULE-VEG-LOGO-FOOD",
+      "version_label": "2020-v1",
+      "doc_id": "DOC-FSSAI-LABELLING-2020",
+      "statutory_reference": "FSSAI Regulation 2.2.2(4) \u2014 Veg/Non-Veg Symbol Mandate",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": "VEG,NON_VEG",
+      "expected_unit": "Symbol",
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": null,
+      "effective_from": "2022-01-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    },
+    {
+      "id": "RV-LMPC-010-v1",
+      "rule_id": "RULE-COUNTRY-ORIGIN",
+      "version_label": "2011-v1",
+      "doc_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(aa) \u2014 Declaration of Country of Origin for Imports",
+      "validation_type": "presence",
+      "operator": "exists",
+      "expected_value": null,
+      "expected_unit": null,
+      "min_value": null,
+      "max_value": null,
+      "condition_expression": "{\"only_if\": \"is_imported\"}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED",
+      "is_active": 1
+    }
+  ]
+}

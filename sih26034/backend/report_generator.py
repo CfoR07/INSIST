@@ -6,37 +6,39 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-def generate_html_report(inspection: Dict[str, Any], images: List[Dict[str, Any]], facts: List[Dict[str, Any]], results: List[Dict[str, Any]], reviews: List[Dict[str, Any]]) -> str:
-    reviews_by_res = {r["compliance_result_id"]: r for r in reviews}
-    pass_cnt = sum(1 for r in results if r["status"] == "PASS")
-    fail_cnt = sum(1 for r in results if r["status"] == "FAIL")
-    unc_cnt = sum(1 for r in results if r["status"] in ["UNCERTAIN", "CONFLICT"])
-    na_cnt = sum(1 for r in results if r["status"] == "NOT_APPLICABLE")
+def generate_html_report(inspection: Dict[str, Any], images: List[Dict[str, Any]], spd: Dict[str, Any], results: List[Dict[str, Any]], reviews: List[Dict[str, Any]]) -> str:
+    reviews_by_res = {r["violation_id"]: r for r in reviews if "violation_id" in r}
+    pass_cnt = sum(1 for r in results if r.get("status") == "PASS")
+    fail_cnt = sum(1 for r in results if r.get("status") == "FAIL")
+    unc_cnt = sum(1 for r in results if r.get("status") in ["UNCERTAIN", "CONFLICT", "REVIEW_REQUIRED"])
+    na_cnt = sum(1 for r in results if r.get("status") == "NOT_APPLICABLE")
     
     rows_html = ""
     for r in results:
-        rev = reviews_by_res.get(r["id"])
+        v_id = r.get("id")
+        rev = reviews_by_res.get(v_id)
         officer_text = f"<span class='text-emerald-700 font-bold'>Confirmed: {rev['decision']}</span>" if rev else "<span class='text-gray-400 italic'>None</span>"
         status_badge = {
             "PASS": "<span class='px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded font-bold text-xs'>PASS</span>",
             "FAIL": "<span class='px-2.5 py-1 bg-rose-100 text-rose-800 rounded font-bold text-xs'>FAIL</span>",
+            "REVIEW_REQUIRED": "<span class='px-2.5 py-1 bg-amber-100 text-amber-800 rounded font-bold text-xs'>REVIEW</span>",
             "UNCERTAIN": "<span class='px-2.5 py-1 bg-amber-100 text-amber-800 rounded font-bold text-xs'>UNCERTAIN</span>",
             "CONFLICT": "<span class='px-2.5 py-1 bg-purple-100 text-purple-800 rounded font-bold text-xs'>CONFLICT</span>",
             "NOT_APPLICABLE": "<span class='px-2.5 py-1 bg-gray-100 text-gray-800 rounded font-bold text-xs'>N/A</span>"
-        }.get(r["status"], r["status"])
+        }.get(r.get("status"), r.get("status", "UNKNOWN"))
         
-        rows_html += f"""
+        rows_html += f'''
         <tr class="border-b border-gray-200 hover:bg-gray-50">
-            <td class="py-3 px-4 font-mono text-xs font-bold text-gray-600">{r.get('rule_id')}</td>
-            <td class="py-3 px-4 font-medium text-gray-900 text-sm">{r.get('requirement')}<br><span class="text-xs text-gray-400">{r.get('source_reference')}</span></td>
+            <td class="py-3 px-4 font-mono text-xs font-bold text-gray-600">{r.get('rule_code', r.get('rule_id', ''))}</td>
+            <td class="py-3 px-4 font-medium text-gray-900 text-sm">{r.get('field', '').replace('_', ' ').title()}<br><span class="text-xs text-gray-400">{r.get('statutory_reference', '')}</span></td>
             <td class="py-3 px-4 font-mono text-xs text-gray-800">{r.get('observed_value') or '—'}</td>
             <td class="py-3 px-4">{status_badge}</td>
-            <td class="py-3 px-4 text-xs text-gray-600">{r.get('reason')}</td>
+            <td class="py-3 px-4 text-xs text-gray-600">{r.get('reason', '')}</td>
             <td class="py-3 px-4 text-xs">{officer_text}</td>
         </tr>
-        """
+        '''
 
-    return f"""<!DOCTYPE html>
+    return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -67,7 +69,7 @@ def generate_html_report(inspection: Dict[str, Any], images: List[Dict[str, Any]
             </div>
             <div>
                 <div class="text-xs text-gray-500 font-medium uppercase">Category</div>
-                <div class="font-bold text-gray-800">{inspection.get('category')}</div>
+                <div class="font-bold text-gray-800">{inspection.get('category_name') or inspection.get('category_id') or 'General Commodity'}</div>
             </div>
             <div>
                 <div class="text-xs text-gray-500 font-medium uppercase">Enforcement Officer</div>
@@ -101,13 +103,13 @@ def generate_html_report(inspection: Dict[str, Any], images: List[Dict[str, Any]
         <div class="p-6">
             <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center justify-between">
                 <span>Statutory Declarations Audit Breakdown</span>
-                <span class="text-xs font-normal text-gray-500">Deterministic Rule Engine v2024</span>
+                <span class="text-xs font-normal text-gray-500">Deterministic Legal Metrology Engine v2.0</span>
             </h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 uppercase font-semibold text-xs border-b border-gray-300">
-                            <th class="py-3 px-4">Rule ID</th>
+                            <th class="py-3 px-4">Rule Code</th>
                             <th class="py-3 px-4">Statutory Requirement</th>
                             <th class="py-3 px-4">Observed Value</th>
                             <th class="py-3 px-4">Verdict</th>
@@ -134,7 +136,7 @@ def generate_html_report(inspection: Dict[str, Any], images: List[Dict[str, Any]
         </div>
     </div>
 </body>
-</html>"""
+</html>'''
 
 def generate_pdf_report(inspection: Dict[str, Any], results: List[Dict[str, Any]], output_path: str):
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
@@ -144,21 +146,21 @@ def generate_pdf_report(inspection: Dict[str, Any], results: List[Dict[str, Any]
     
     title_style = ParagraphStyle(name='TitleStyle', parent=styles['Heading1'], fontSize=16, leading=20, textColor=colors.HexColor('#0f172a'))
     story.append(Paragraph(f"<b>SIH26034 Legal Metrology Inspection Report</b>", title_style))
-    story.append(Paragraph(f"Inspection ID: {inspection.get('id')} | Product: {inspection.get('product_name')} ({inspection.get('category')})", styles['Normal']))
+    story.append(Paragraph(f"Inspection ID: {inspection.get('id')} | Product: {inspection.get('product_name')}", styles['Normal']))
     story.append(Paragraph(f"Officer ID: {inspection.get('officer_id')} | Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", styles['Normal']))
     story.append(Spacer(1, 14))
     
-    data = [["Rule ID", "Statutory Requirement", "Observed Fact", "Verdict", "Validation Details"]]
+    data = [["Rule Code", "Field", "Observed Fact", "Verdict", "Validation Details"]]
     for r in results:
         data.append([
-            r.get("rule_id", ""),
-            r.get("requirement", "")[:35],
+            r.get("rule_code", r.get("rule_id", "")),
+            r.get("field", ""),
             str(r.get("observed_value", ""))[:20],
             r.get("status", ""),
             r.get("reason", "")[:50]
         ])
         
-    t = Table(data, colWidths=[65, 140, 95, 65, 175])
+    t = Table(data, colWidths=[65, 90, 110, 65, 210])
     t.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1e293b')),
         ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),

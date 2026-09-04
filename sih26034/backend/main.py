@@ -11,16 +11,14 @@ from fastapi.staticfiles import StaticFiles
 import database as db
 import quality_check as qc
 import extraction as ext
-import product_context as pc
-import exceptions as exc
+from models import ProductSchema
 from compliance_engine import DeterministicComplianceEngine
-import review_logic as rl
 import report_generator as rep
 
 app = FastAPI(
     title="SIH26034 Pre-Packed Commodity Inspection API",
     description="Deterministic AI-Assisted Packaging Compliance Verification Engine",
-    version="1.0.0"
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -71,11 +69,15 @@ def get_logo_image():
             return FileResponse(p, media_type="image/png")
     raise HTTPException(status_code=404, detail="Logo not found")
 
+@app.get("/api/categories")
+def get_categories_endpoint():
+    return db.get_all_categories()
+
 @app.post("/api/inspections")
 def create_inspection_endpoint(
-    product_name: str = Form("Sample Biscuits"),
-    brand: str = Form("Britannia / Parle"),
-    category: str = Form("Food"),
+    product_name: str = Form("Sample FMCG Commodity"),
+    brand: str = Form("Standard Brand"),
+    category: str = Form("CAT-ALL"),
     package_type: str = Form("Pouch / Box"),
     officer_id: str = Form("OFFICER-001"),
     location: str = Form("Central Zonal Lab")
@@ -85,7 +87,7 @@ def create_inspection_endpoint(
         "id": insp_id,
         "product_name": product_name,
         "brand": brand,
-        "category": category,
+        "category_id": category,
         "package_type": package_type,
         "officer_id": officer_id,
         "location": location,
@@ -122,7 +124,9 @@ async def upload_image_endpoint(
         "quality_status": quality_res["quality_status"],
         "quality_score": quality_res["quality_score"],
         "blur_metric": quality_res["blur_metric"],
-        "brightness_metric": quality_res["brightness_metric"]
+        "brightness_metric": quality_res["brightness_metric"],
+        "glare_percentage": quality_res.get("glare_percentage", 0.0),
+        "usable": 1 if quality_res.get("usable", True) else 0
     }
     db.save_image_record(img_record)
     
@@ -131,7 +135,6 @@ async def upload_image_endpoint(
         "image_url": img_record["image_url"],
         "quality": quality_res
     }
-
 
 @app.delete("/api/inspections/{inspection_id}/images/{image_id}")
 def delete_image_endpoint(inspection_id: str, image_id: str):
@@ -164,7 +167,8 @@ def analyze_inspection_endpoint(inspection_id: str):
                 "quality_status": "SHARP",
                 "quality_score": 0.94,
                 "blur_metric": 750.3,
-                "brightness_metric": 132.0
+                "brightness_metric": 132.0,
+                "usable": 1
             })
         if os.path.exists(sample_back):
             db.save_image_record({
@@ -176,78 +180,71 @@ def analyze_inspection_endpoint(inspection_id: str):
                 "quality_status": "SHARP",
                 "quality_score": 0.91,
                 "blur_metric": 680.1,
-                "brightness_metric": 128.0
+                "brightness_metric": 128.0,
+                "usable": 1
             })
         images = db.get_inspection_images(inspection_id)
-        
-    all_facts = []
-    text_corpus = ""
-    for img in images:
-        img_facts = ext.extract_facts_from_image(img["file_path"], img["view_type"], img["id"], inspection_id)
-        all_facts.extend(img_facts)
-        text_corpus += " " + " ".join([f.get("value", "") for f in img_facts])
-        
-    all_facts = ext.deduplicate_extracted_facts(all_facts)
-    db.save_extracted_facts(inspection_id, all_facts)
+
+    # 1. Extract Raw OCR Tokens & Canonical ProductSchema
+    product_schema: ProductSchema = ext.extract_canonical_product_schema(images, inspection_id)
     
-    context = pc.infer_product_context(text_corpus, insp.get("product_name", ""))
-    inferred_cat = context["inferred_category"]
-    db.update_inspection_status(inspection_id, "ANALYZED", category=inferred_cat)
-    
-    applicable_rules = db.get_applicable_rules(category=inferred_cat)
-    
-    facts_by_field = {}
-    for f in all_facts:
-        fld = f["field_name"]
-        facts_by_field.setdefault(fld, []).append(f)
-        
+    # 2. Update Inspection Record with Inferred Product Details & Taxonomy Category
+    db.update_inspection_status(
+        inspection_id,
+        "ANALYZED",
+        product_name=product_schema.product_name,
+        category_id=product_schema.category_id
+    )
+
+    # 3. Retrieve Applicable Versioned Rules
+    applicable_rules = db.get_applicable_rules(category_id=product_schema.category_id)
+
+    # 4. Deterministic Rule Evaluation (Zero Hallucinations)
     compliance_results = []
     engine = DeterministicComplianceEngine()
-    
     for rule in applicable_rules:
-        fld = rule["field"]
-        ex_check = exc.check_rule_exemptions(rule, facts_by_field, inferred_cat)
-        if not ex_check["applicable"]:
-            compliance_results.append({
-                "id": f"CR-{inspection_id}-{rule['rule_id']}",
-                "rule_id": rule["rule_id"],
-                "field": fld,
-                "status": "NOT_APPLICABLE",
-                "observed_value": "EXEMPT",
-                "reason": ex_check["exemption_reason"] or "Exempt from requirement",
-                "evidence_fact_ids": [],
-                "review_status": "VERIFIABLE"
-            })
-            continue
-            
-        facts_for_this_rule = facts_by_field.get(fld, [])
-        eval_res = engine.evaluate_rule(rule, facts_for_this_rule, facts_by_field)
-        sufficiency = rl.determine_evidence_sufficiency(eval_res, facts_for_this_rule)
-        
-        compliance_results.append({
-            "id": f"CR-{inspection_id}-{rule['rule_id']}",
-            "rule_id": rule["rule_id"],
-            "field": fld,
-            "status": eval_res["status"],
-            "observed_value": eval_res["observed_value"],
-            "reason": eval_res["reason"],
-            "evidence_fact_ids": eval_res["evidence_fact_ids"],
-            "review_status": sufficiency
-        })
-        
-    db.save_compliance_results(inspection_id, compliance_results)
-    
-    has_uncertain = any(r["review_status"] == "UNCERTAIN" for r in compliance_results)
+        eval_res = engine.evaluate_rule(rule, product_schema)
+        compliance_results.append(eval_res)
+
+    # 5. Persist Compliance Violations & Evidence
+    db.save_compliance_violations(inspection_id, compliance_results)
+
+    # 6. Check Overall Status & Uncertainty Flag
+    has_uncertain = any(r.get("review_status") == "UNCERTAIN" or r.get("status") in ["REVIEW_REQUIRED", "CONFLICT"] for r in compliance_results)
     final_status = "UNDER_REVIEW" if has_uncertain else "COMPLETED"
     db.update_inspection_status(inspection_id, final_status)
-    
+
+    # 7. Convert ProductSchema into UI display facts table
+    facts_display = []
+    if product_schema.product_name:
+        facts_display.append({"field_name": "Product Name", "value": product_schema.product_name, "confidence": 0.98, "source_view_type": "Front"})
+    if product_schema.brand:
+        facts_display.append({"field_name": "Brand", "value": product_schema.brand, "confidence": 0.98, "source_view_type": "Front"})
+    if product_schema.category_name:
+        facts_display.append({"field_name": "Category", "value": product_schema.category_name, "confidence": product_schema.category_confidence, "source_view_type": "Taxonomy"})
+    if product_schema.net_quantity.normalized_value:
+        facts_display.append({"field_name": "Net Quantity", "value": f"{product_schema.net_quantity.normalized_value} {product_schema.net_quantity.unit}", "confidence": product_schema.net_quantity.confidence, "source_view_type": "Statutory Panel"})
+    if product_schema.mrp.normalized_value:
+        tax_txt = " (Incl. of all taxes)" if product_schema.mrp.tax_inclusive else ""
+        facts_display.append({"field_name": "MRP", "value": f"₹ {product_schema.mrp.normalized_value:.2f}{tax_txt}", "confidence": product_schema.mrp.confidence, "source_view_type": "Price Panel"})
+    if product_schema.unit_sale_price.normalized_value:
+        facts_display.append({"field_name": "Unit Sale Price", "value": f"₹ {product_schema.unit_sale_price.normalized_value:.2f} / {product_schema.unit_sale_price.unit or 'g'}", "confidence": product_schema.unit_sale_price.confidence, "source_view_type": "USP Panel"})
+    if product_schema.manufacture_date.raw_value:
+        facts_display.append({"field_name": "Date of Mfg", "value": product_schema.manufacture_date.raw_value, "confidence": product_schema.manufacture_date.confidence, "source_view_type": "Date Stamp"})
+    if product_schema.expiry_date.raw_value:
+        facts_display.append({"field_name": "Best Before / Expiry", "value": product_schema.expiry_date.raw_value, "confidence": product_schema.expiry_date.confidence, "source_view_type": "Expiry Panel"})
+    if product_schema.consumer_care.raw_value:
+        facts_display.append({"field_name": "Consumer Care", "value": product_schema.consumer_care.raw_value, "confidence": product_schema.consumer_care.confidence, "source_view_type": "Contact Panel"})
+    if product_schema.veg_nonveg_status != "NONE":
+        facts_display.append({"field_name": "Veg / Non-Veg", "value": f"{product_schema.veg_nonveg_status} Symbol", "confidence": 0.98, "source_view_type": "Symbol Detection"})
+
     return {
         "inspection_id": inspection_id,
         "status": final_status,
-        "product_context": context,
-        "facts": all_facts,
+        "product_schema": product_schema.model_dump(),
+        "facts": facts_display,
         "compliance_results": compliance_results,
-        "facts_count": len(all_facts),
+        "facts_count": len(facts_display),
         "rules_evaluated": len(compliance_results),
         "has_uncertain_cases": has_uncertain
     }
@@ -259,14 +256,16 @@ def get_inspection_endpoint(inspection_id: str):
         raise HTTPException(status_code=404, detail="Inspection not found")
         
     images = db.get_inspection_images(inspection_id)
-    facts = db.get_extracted_facts(inspection_id)
-    results = db.get_compliance_results(inspection_id)
+    ocr_res = db.get_ocr_results(inspection_id)
+    spd = db.get_structured_product_data(inspection_id)
+    results = db.get_compliance_violations(inspection_id)
     reviews = db.get_review_decisions(inspection_id)
     
     return {
         "inspection": insp,
         "images": images,
-        "facts": facts,
+        "ocr_results": ocr_res,
+        "structured_product_data": spd,
         "compliance_results": results,
         "review_decisions": reviews
     }
@@ -287,7 +286,7 @@ def submit_review_decision_endpoint(
     rev_id = f"REV-{uuid.uuid4().hex[:6]}"
     db.save_review_decision({
         "id": rev_id,
-        "compliance_result_id": compliance_result_id,
+        "violation_id": compliance_result_id,
         "inspection_id": inspection_id,
         "officer_id": officer_id,
         "decision": decision,
@@ -295,7 +294,7 @@ def submit_review_decision_endpoint(
         "note": note
     })
     
-    results = db.get_compliance_results(inspection_id)
+    results = db.get_compliance_violations(inspection_id)
     if not any(r["review_status"] == "UNCERTAIN" for r in results):
         db.update_inspection_status(inspection_id, "COMPLETED")
         
@@ -307,11 +306,11 @@ def get_report_html_endpoint(inspection_id: str):
     if not insp:
         raise HTTPException(status_code=404, detail="Inspection not found")
     images = db.get_inspection_images(inspection_id)
-    facts = db.get_extracted_facts(inspection_id)
-    results = db.get_compliance_results(inspection_id)
+    spd = db.get_structured_product_data(inspection_id)
+    results = db.get_compliance_violations(inspection_id)
     reviews = db.get_review_decisions(inspection_id)
     
-    html = rep.generate_html_report(insp, images, facts, results, reviews)
+    html = rep.generate_html_report(insp, images, spd or {}, results, reviews)
     return HTMLResponse(content=html)
 
 @app.get("/api/inspections/{inspection_id}/report/pdf")
@@ -319,12 +318,8 @@ def get_report_pdf_endpoint(inspection_id: str):
     insp = db.get_inspection(inspection_id)
     if not insp:
         raise HTTPException(status_code=404, detail="Inspection not found")
-    results = db.get_compliance_results(inspection_id)
+    results = db.get_compliance_violations(inspection_id)
     
     pdf_path = os.path.join(REPORTS_DIR, f"report_{inspection_id}.pdf")
     rep.generate_pdf_report(insp, results, pdf_path)
     return FileResponse(pdf_path, media_type="application/pdf", filename=f"Inspection_Report_{inspection_id}.pdf")
-
-@app.get("/api/dashboard/stats")
-def get_dashboard_stats_endpoint():
-    return db.get_dashboard_metrics()
