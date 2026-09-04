@@ -323,3 +323,102 @@ def get_report_pdf_endpoint(inspection_id: str):
     pdf_path = os.path.join(REPORTS_DIR, f"report_{inspection_id}.pdf")
     rep.generate_pdf_report(insp, results, pdf_path)
     return FileResponse(pdf_path, media_type="application/pdf", filename=f"Inspection_Report_{inspection_id}.pdf")
+
+# ==========================================
+# REGULATORY DATA INGESTION & HUMAN VERIFICATION
+# ==========================================
+
+from regulatory_ingestion.sources import AUTHORITATIVE_SOURCES
+from regulatory_ingestion.fetcher import fetch_and_store_document
+from regulatory_ingestion.document_parser import parse_regulatory_text
+from regulatory_ingestion.rule_builder import generate_candidate_rules
+from regulatory_ingestion.verifier import verify_and_activate_candidate_rule
+
+@app.get("/api/regulatory/sources")
+def get_regulatory_sources_endpoint():
+    """List all configured authoritative Legal Metrology & FSSAI gazette sources."""
+    return AUTHORITATIVE_SOURCES
+
+@app.post("/api/regulatory/fetch-and-ingest")
+def fetch_and_ingest_endpoint():
+    """
+    Triggers source collector:
+    1. Downloads & stores official Gazette docs with SHA-256 integrity hashing.
+    2. Detects modifications / new notifications.
+    3. Extracts statutory clauses and generates candidate rules in PENDING status.
+    """
+    ingestion_summary = []
+    
+    for src in AUTHORITATIVE_SOURCES:
+        fetch_res = fetch_and_store_document(src)
+        doc_record = fetch_res["record"]
+        doc_id = db.save_regulatory_document(doc_record)
+        
+        parsed_doc = parse_regulatory_text(fetch_res["content_path"], doc_record)
+        candidates = generate_candidate_rules(parsed_doc)
+        
+        ingestion_summary.append({
+            "doc_id": doc_id,
+            "title": doc_record["title"],
+            "sha256": doc_record["sha256_hash"],
+            "status": fetch_res["status"],
+            "candidates_generated": len(candidates),
+            "candidates": candidates
+        })
+        
+    return {
+        "status": "COMPLETED",
+        "timestamp": datetime.now().isoformat(),
+        "total_sources": len(AUTHORITATIVE_SOURCES),
+        "results": ingestion_summary
+    }
+
+@app.get("/api/regulatory/candidates")
+def list_candidate_rules_endpoint():
+    """Lists unverified candidate rules generated from authoritative gazette notifications."""
+    candidates = []
+    for src in AUTHORITATIVE_SOURCES:
+        fetch_res = fetch_and_store_document(src)
+        doc_record = fetch_res["record"]
+        parsed_doc = parse_regulatory_text(fetch_res["content_path"], doc_record)
+        rules = generate_candidate_rules(parsed_doc)
+        candidates.extend(rules)
+    return {"count": len(candidates), "candidates": candidates}
+
+@app.post("/api/regulatory/verify-and-activate")
+def verify_candidate_rule_endpoint(
+    rule_id: str = Form(...),
+    rule_code: str = Form(...),
+    version_label: str = Form(...),
+    doc_id: str = Form(...),
+    field: str = Form(...),
+    validation_type: str = Form("PRESENCE"),
+    operator: str = Form("EQUALS"),
+    statutory_reference: str = Form(...),
+    effective_from: str = Form(...),
+    officer_id: str = Form("LEGAL-OFFICER-001"),
+    notes: Optional[str] = Form("Statutory confirmation verified against official Gazette")
+):
+    """
+    Human verification workflow: An officer confirms statutory text, citation, and sets effective date.
+    Transitions rule from PENDING -> VERIFIED and activates it for the deterministic compliance engine.
+    """
+    candidate_obj = {
+        "rule_id": rule_id,
+        "rule_code": rule_code,
+        "version_label": version_label,
+        "doc_id": doc_id,
+        "field": field,
+        "validation_type": validation_type,
+        "operator": operator
+    }
+    
+    result = verify_and_activate_candidate_rule(
+        candidate=candidate_obj,
+        officer_id=officer_id,
+        human_confirmed_statutory_ref=statutory_reference,
+        human_confirmed_effective_date=effective_from,
+        notes=notes
+    )
+    return result
+

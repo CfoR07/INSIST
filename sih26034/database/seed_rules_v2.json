@@ -1,0 +1,259 @@
+{
+  "categories": [
+    {
+      "id": "CAT-GEN",
+      "name": "General Commodity",
+      "parent_id": null,
+      "description": "All standard pre-packed retail commodities under LMPC 2011"
+    },
+    {
+      "id": "CAT-FOOD",
+      "name": "Food",
+      "parent_id": "CAT-GEN",
+      "description": "Edible packaged food, confectionery, bakery, and beverages"
+    },
+    {
+      "id": "CAT-COSM",
+      "name": "Cosmetics & Personal Care",
+      "parent_id": "CAT-GEN",
+      "description": "Skin care, hair care, soaps, and perfumes"
+    },
+    {
+      "id": "CAT-ELEC",
+      "name": "Electronics & Electricals",
+      "parent_id": "CAT-GEN",
+      "description": "Appliances, cables, batteries, gadgets"
+    },
+    {
+      "id": "CAT-PHARMA",
+      "name": "Pharmaceuticals & Drugs",
+      "parent_id": "CAT-GEN",
+      "description": "Medicines, tablets, formulations regulated under Drugs & Cosmetics Act"
+    }
+  ],
+  "regulatory_documents": [
+    {
+      "id": "DOC-LMPC-2011",
+      "title": "Legal Metrology (Packaged Commodities) Rules, 2011",
+      "issuing_authority": "Ministry of Consumer Affairs, Food and Public Distribution",
+      "gazette_notification_no": "G.S.R. 202(E)",
+      "publication_date": "2011-03-07",
+      "effective_date": "2011-04-01",
+      "source_url": "https://consumeraffairs.nic.in/acts-and-rules/legal-metrology/legal-metrology-packaged-commodities-rules-2011",
+      "is_verified": 1
+    },
+    {
+      "id": "DOC-LMPC-USP-2021",
+      "title": "Legal Metrology (Packaged Commodities) Amendment Rules, 2021 (Unit Sale Price Mandate)",
+      "issuing_authority": "Ministry of Consumer Affairs, Food and Public Distribution",
+      "gazette_notification_no": "G.S.R. 779(E)",
+      "publication_date": "2021-11-02",
+      "effective_date": "2022-12-01",
+      "source_url": "https://consumeraffairs.nic.in/gazette-notifications/gsr-779e-unit-sale-price",
+      "is_verified": 1
+    },
+    {
+      "id": "DOC-FSSAI-LABELLING-2020",
+      "title": "Food Safety and Standards (Labelling and Display) Regulations, 2020",
+      "issuing_authority": "Food Safety and Standards Authority of India (FSSAI)",
+      "gazette_notification_no": "F. No. 1-94/FSSAI/SP(L&C)/2020",
+      "publication_date": "2020-11-17",
+      "effective_date": "2022-01-01",
+      "source_url": "https://www.fssai.gov.in/upload/uploadfiles/files/Gazette_Notification_Labelling_Display_18_11_2020.pdf",
+      "is_verified": 1
+    }
+  ],
+  "rules": [
+    {
+      "id": "R-NAME",
+      "rule_code": "LM-NAME-001",
+      "category_id": "CAT-GEN",
+      "field": "product_name",
+      "requirement_name": "Generic Name of Commodity",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-QTY",
+      "rule_code": "LM-QTY-001",
+      "category_id": "CAT-GEN",
+      "field": "net_quantity",
+      "requirement_name": "Net Quantity with Standard Metric Units",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-MRP",
+      "rule_code": "LM-MRP-001",
+      "category_id": "CAT-GEN",
+      "field": "mrp",
+      "requirement_name": "Maximum Retail Price with Tax Declaration",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-USP",
+      "rule_code": "LM-USP-001",
+      "category_id": "CAT-GEN",
+      "field": "unit_sale_price",
+      "requirement_name": "Unit Sale Price (USP) per g/kg/ml/l",
+      "severity": "MAJOR"
+    },
+    {
+      "id": "R-MFG",
+      "rule_code": "LM-MFG-001",
+      "category_id": "CAT-GEN",
+      "field": "manufacture_date",
+      "requirement_name": "Month and Year of Manufacture/Packing",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-EXP",
+      "rule_code": "LM-EXP-001",
+      "category_id": "CAT-FOOD",
+      "field": "expiry_date",
+      "requirement_name": "Best Before / Expiry Date",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-MFR",
+      "rule_code": "LM-MFR-001",
+      "category_id": "CAT-GEN",
+      "field": "manufacturer",
+      "requirement_name": "Name and Complete Address of Manufacturer / Packer",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "R-CARE",
+      "rule_code": "LM-CARE-001",
+      "category_id": "CAT-GEN",
+      "field": "consumer_care",
+      "requirement_name": "Consumer Care Contact Details",
+      "severity": "MAJOR"
+    },
+    {
+      "id": "R-VEG",
+      "rule_code": "LM-VEG-001",
+      "category_id": "CAT-FOOD",
+      "field": "veg_nonveg",
+      "requirement_name": "Vegetarian / Non-Vegetarian Logo Declaration",
+      "severity": "MAJOR"
+    }
+  ],
+  "rule_versions": [
+    {
+      "id": "RV-NAME-2011",
+      "rule_id": "R-NAME",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(a) \u2014 Legal Metrology (Packaged Commodities) Rules, 2011",
+      "validation_type": "presence",
+      "operator": "exists",
+      "machine_readable_logic": "{\"min_length\": 2, \"condition\": \"mandatory\"}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-QTY-2011",
+      "rule_id": "R-QTY",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(f) & Rule 12 \u2014 Standard Units of Weight and Measure",
+      "validation_type": "unit_check",
+      "operator": "in_list",
+      "machine_readable_logic": "{\"allowed_units\": [\"g\", \"gm\", \"kg\", \"ml\", \"l\", \"m\", \"cm\", \"mm\", \"n\", \"units\", \"pcs\"], \"must_be_positive\": true}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-MRP-2011",
+      "rule_id": "R-MRP",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(e) & Expl. (iii) \u2014 Legal Metrology (Packaged Commodities) Rules, 2011",
+      "validation_type": "format",
+      "operator": "regex_match",
+      "machine_readable_logic": "{\"must_be_positive\": true, \"tax_inclusive_pattern\": \"(?:incl|inclusive|tax|m\\\\.?r\\\\.?p)\"}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-USP-2022",
+      "rule_id": "R-USP",
+      "version_label": "v2022.1",
+      "document_id": "DOC-LMPC-USP-2021",
+      "statutory_reference": "Rule 6(11) \u2014 Gazette Notification G.S.R. 779(E)",
+      "validation_type": "arithmetic_usp",
+      "operator": "usp_formula",
+      "machine_readable_logic": "{\"threshold_condition\": \"package_weight_not_equal_to_base_unit\", \"tolerance_pct\": 5.0}",
+      "effective_from": "2022-12-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-MFG-2011",
+      "rule_id": "R-MFG",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(d) \u2014 Legal Metrology (Packaged Commodities) Rules, 2011",
+      "validation_type": "date_presence",
+      "operator": "is_valid_date",
+      "machine_readable_logic": "{\"date_formats\": [\"MM/YYYY\", \"DD/MM/YYYY\", \"YYYY-MM\", \"Mon YYYY\"]}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-EXP-2011",
+      "rule_id": "R-EXP",
+      "version_label": "v2011.1",
+      "document_id": "DOC-FSSAI-LABELLING-2020",
+      "statutory_reference": "Rule 6(1)(d) Proviso & FSSAI Regulation 2.2.2",
+      "validation_type": "date_presence",
+      "operator": "is_valid_date",
+      "machine_readable_logic": "{\"applies_to\": [\"CAT-FOOD\", \"CAT-COSM\", \"CAT-PHARMA\"]}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-MFR-2011",
+      "rule_id": "R-MFR",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(a) & 6(1)(b) \u2014 Legal Metrology (Packaged Commodities) Rules, 2011",
+      "validation_type": "presence",
+      "operator": "exists",
+      "machine_readable_logic": "{\"min_length\": 5}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-CARE-2011",
+      "rule_id": "R-CARE",
+      "version_label": "v2011.1",
+      "document_id": "DOC-LMPC-2011",
+      "statutory_reference": "Rule 6(1)(b) \u2014 Consumer Care Contact Details",
+      "validation_type": "presence",
+      "operator": "exists",
+      "machine_readable_logic": "{\"requires_phone_or_email_or_address\": true}",
+      "effective_from": "2011-04-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "RV-VEG-2020",
+      "rule_id": "R-VEG",
+      "version_label": "v2020.1",
+      "document_id": "DOC-FSSAI-LABELLING-2020",
+      "statutory_reference": "Regulation 2.2.2(4) \u2014 FSSAI Vegetarian/Non-Vegetarian Logo Mandate",
+      "validation_type": "presence",
+      "operator": "exists",
+      "machine_readable_logic": "{\"applies_to\": [\"CAT-FOOD\"]}",
+      "effective_from": "2022-01-01",
+      "effective_until": null,
+      "verification_status": "VERIFIED"
+    }
+  ]
+}

@@ -289,6 +289,7 @@ def get_applicable_rules(category_id: str = "CAT-ALL", inspection_date: str = No
             rv.effective_from,
             rv.effective_until,
             rv.verification_status,
+            rv.is_active,
             d.title as document_title,
             d.notification_number,
             d.authority as issuing_authority
