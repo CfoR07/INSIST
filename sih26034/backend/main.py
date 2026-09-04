@@ -50,6 +50,27 @@ def root():
             return HTMLResponse(content=f.read())
     return HTMLResponse(content="<h1>SIH26034 Inspection Server Online</h1><p><a href='/docs'>Swagger API Docs</a></p>")
 
+@app.get("/bg_noir.jpg")
+@app.get("/bg_noir.png")
+def get_bg_image():
+    for name in ["bg_noir.png", "bg_noir.jpg"]:
+        p = os.path.join(os.path.dirname(__file__), name)
+        if os.path.exists(p):
+            media = "image/png" if name.endswith(".png") else "image/jpeg"
+            return FileResponse(p, media_type=media)
+    raise HTTPException(status_code=404, detail="Background not found")
+
+@app.get("/logo.png")
+@app.get("/insist.png")
+@app.get("/favicon.png")
+@app.get("/favicon.ico")
+def get_logo_image():
+    for name in ["logo.png", "insist.png", "favicon.png"]:
+        p = os.path.join(os.path.dirname(__file__), name)
+        if os.path.exists(p):
+            return FileResponse(p, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Logo not found")
+
 @app.post("/api/inspections")
 def create_inspection_endpoint(
     product_name: str = Form("Sample Biscuits"),
